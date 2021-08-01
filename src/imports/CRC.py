@@ -1,5 +1,5 @@
 
-# Performs XOR betwwen two binary numbers reprensented as String
+# Performs XOR betwwen two binary numbers reprensented as strings
 def xor(x, y):
     result = ""
     for i in range(1, len(y)):
@@ -13,8 +13,6 @@ def xor(x, y):
 # Performs Modulo-2 division
 def mod2div(divident, divisor):
     divisor_length = len(divisor)
-
-    # Slicing the divident to appropriate length for particular step
     tmp = divident[0: divisor_length]
     while divisor_length < len(divident):
         if tmp[0] == '1':
@@ -22,39 +20,34 @@ def mod2div(divident, divisor):
             tmp = xor(divisor, tmp) + divident[divisor_length]
         else:
             tmp = xor('0'*divisor_length, tmp) + divident[divisor_length]
-
-        # increment divisor_length to move further
         divisor_length += 1
 
     # For the last n bits, we have to carry it out normally as increased value of
-    # divisor_length will cause IndexOutOfBounds exception.
+    # divisor_length will cause IndexOutOfBoundsException.
     if tmp[0] == '1':
         tmp = xor(divisor, tmp)
     else:
         tmp = xor('0'*divisor_length, tmp)
-
-    # Returns the remainder of the division
     rem = tmp
     return rem
 
 
-# Takes the dataword and key as inputs and generates CRC based on that
+# Generates CRC for given data and key
 def gen_CRC(data, key):
     key_length = len(key)
-
-    # Appends n-1 zeroes at end of data
     appended_data = data + '0'*(key_length-1)
     crc = mod2div(appended_data, key)
     return crc
 
 
+# Main() method to implement functionalities
 def main():
     data = "100100011110"
     key = "10011"
     crc = gen_CRC(data, key)
     data_word = data + crc
-    print("Data = " + str(data) + ", Key = " + str(key))
-    print("Generated CRC = " + str(crc) + "\nDataWord  = " + str(data_word))
+    print("\nData = " + str(data) + "\nKey = " + str(key) +
+          "\nGenerated CRC = " + str(crc) + "\nDataWord  = " + str(data_word) + "\n")
 
 
 if __name__ == "__main__":
