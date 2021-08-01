@@ -2,13 +2,13 @@
 def binary_sum(x1, x2, x3, x4, k):
     bin_sum = bin(int(x1, 2) + int(x2, 2) + int(x3, 2) + int(x4, 2))[2:]
 
-    if len(bin_sum) > k:
+    while len(bin_sum) > k:
         c = len(bin_sum) - k
         carry = bin_sum[0:c]
         bin_sum = bin_sum[c:]
         bin_sum = bin(int(bin_sum, 2) + int(carry, 2))[2:]
 
-    elif len(bin_sum) < k:
+    if len(bin_sum) < k:
         c = k - len(bin_sum)
         bin_sum = '0'*c + bin_sum
 
@@ -37,7 +37,8 @@ def main():
           "\nLength of each packet = " + str(packet_length) +
           "\nGenerated CheckSum = " + str(check_sum) +
           "\nLength of CheckSum = " + str(len(check_sum)) +
-          "\nDataWord = " + str(data_word) + "\n")
+          "\nDataWord = " + str(data_word) +
+          "\nLength of DataWord = " + str(len(data_word)) + "\n")
 
 
 if __name__ == "__main__":
