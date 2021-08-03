@@ -6,7 +6,7 @@ import packages.LRC as lrc
 import packages.senderCheckSum as scs
 
 
-def send_data():
+def sendData():
     host = '127.0.0.1'
     port = 2021
     SenderSideSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -14,11 +14,11 @@ def send_data():
     try:
         SenderSideSocket.connect((host, port))
     except socket.error as e:
-        print("Receiver is Currently Inactive. Connection Failed!\n\nError : " + str(sys.exc_info()))
+        print("Channel is Currently Inactive. Connection Failed!\n\nError : " + str(sys.exc_info()))
         print("\nException Caught : " + str(e))
         sys.exit()
 
-    print("Receiver is Currently Active.\nSend Sender-Request to Get Response Fom Receiver.")
+    print("Channel is Currently Active.\nSend Request to Get Response Fom Receiver.")
 
     Receiver_response = SenderSideSocket.recv(1024)
 
@@ -74,7 +74,7 @@ def send_data():
 
 
 def main():
-    send_data()
+    sendData()
 
 
 if __name__ == "__main__":
