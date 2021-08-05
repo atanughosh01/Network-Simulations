@@ -1,5 +1,5 @@
 
-def gen_LRC(data):
+def gen_LRC(data: str) -> str:
     lrc = data[0:4]
     return lrc
 
