@@ -12,7 +12,7 @@ def binary_sum(x1, x2, x3, x4, x5, k):
     return bin_sum
 
 
-def gen_CheckSum(data, k):
+def gen_CheckSum(data: str, k: int) -> str:
     b1 = data[0:k]
     b2 = data[k:2*k]
     b3 = data[2*k:3*k]
