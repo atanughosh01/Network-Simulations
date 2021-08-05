@@ -1,5 +1,5 @@
 
-def gen_VRC(data):
+def gen_VRC(data: str) -> str:
     count = 0
     for i in data:
         if i == '1':
