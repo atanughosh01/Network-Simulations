@@ -11,7 +11,7 @@ from _thread import start_new_thread
 def listen_to_sender():
     host = '127.0.0.1'
     sender_port = 2021
-    receiver_port = 2000
+    # receiver_port = 2000
     channel_side_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:

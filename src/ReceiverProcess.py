@@ -19,7 +19,7 @@ def receive_data():
         n = int(input("Enter No. of Sender(s) You Want to Keep Waiting : "))
         max = int(input("Enter Max No. of Senders Allowed to send Request : "))
         receiver_side_socket.listen(n)                  # queue up to 'n' requests
-        print("Socket Has Been Created." + "\Receiver is Now Listening...." +
+        print("Socket Has Been Created." + "\nReceiver is Now Listening...." +
               "\nWaiting For Channel(s)/Sender(s) to Connect....")
 
     except socket.error as e:
