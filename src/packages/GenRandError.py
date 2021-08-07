@@ -8,8 +8,7 @@ def gen_rand_error(data: str, count: int) -> str:
     digit_list = list(data)
     k = random.sample(range(0, length), count)
     for index in k:
-        # This will replace 0-s at some positions with 1-s or 1-s with 0-s
-        # Number of flipped bits = count
+        # This will replace 0-s with 1-s & 1-s with 0-s at specified number of positions
         if digit_list[index] == '1':
             digit_list[index] = digit_list[index].replace('1', '0')
         elif digit_list[index] == '0':
