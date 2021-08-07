@@ -5,16 +5,16 @@ import packages.LRC as lrc
 import packages.CRC as crc
 import packages.senderCheckSum as scs
 import packages.receiverCheckSum as rcs
+import packages.GenRandError as gre
 from _thread import start_new_thread
 
 
 def send_data():
     host = '127.0.0.1'
-    sender_port = 2021
+    sender_port = 65432
     sender_side_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    try:
-        sender_side_socket.connect((host, sender_port))
+    try: sender_side_socket.connect((host, sender_port))
     except socket.error as e:
         print("Channel is Currently Inactive. Connection Failed!\n\nError : " + str(sys.exc_info()))
         print("\nException Caught : " + str(e))
@@ -25,27 +25,19 @@ def send_data():
     receiver_response = sender_side_socket.recv(1024)
 
     while True:
-        # data = input("\nEnter data to send (Enter 0 to Exit) : ")
         try:
             with open("input.txt", "r") as file:
                 data = file.read()
         except FileNotFoundError as fnfe:
             print("\nFILE_ERR : " + str(fnfe))
-            sys.exit()
+            sys.exit(1)
 
-        if data == '0':
-            sender_side_socket.close()
-            print("\nConnection Has Been Closed.\nSender Has Exited.")
-            sys.exit()
-
-        print("DATA = " + str(data))
+        print("\nDATA = " + str(data))
         string_length = len(data)
-        # packet_length = 32
-        try:
-            packet_length = int(input("\nEnter length of each packet : "))
-        except ValueError as ve:
-            print("\nVAL_ERR : " + str(ve))
-            sys.exit()
+        try: packet_length = int(input("\nEnter length of each packet : "))     # ENTER 32
+        except Exception as ve:
+            print("\nEXCEPTION : " + str(ve) + "\nExiting System.... Exited")
+            sys.exit(1)
 
         packet_count = int(string_length/packet_length)
         print("\nLength of data = " + str(string_length))
@@ -68,31 +60,20 @@ def send_data():
             for packet in packet_list:
                 vrc_data = vrc.gen_VRC(packet)
                 code_word = packet + vrc_data
-                code_word_list.append(code_word)
-            print("\nCode-Word List :", code_word_list)
-
-            # vrc_data = vrc.gen_VRC(data)
-            # sent_data = data + vrc_data
-
-            for code_word in code_word_list:
                 sender_side_socket.sendall(str.encode("\n".join([str(code_word), str(choice)])))
                 receiver_response = sender_side_socket.recv(1024)
                 print(receiver_response.decode("utf-8"))
+                code_word_list.append(code_word)
 
         elif choice == 2:
             code_word_list = []
             for packet in packet_list:
                 lrc_data = lrc.gen_LRC(packet)
                 code_word = packet + lrc_data
-                code_word_list.append(code_word)
-
-            # lrc_data = lrc.gen_LRC(data)
-            # sent_data = data + lrc_data
-
-            for code_word in code_word_list:
                 sender_side_socket.sendall(str.encode("\n".join([str(code_word), str(choice)])))
                 receiver_response = sender_side_socket.recv(1024)
                 print(receiver_response.decode("utf-8"))
+                code_word_list.append(code_word)
 
         elif choice == 3:
             code_word_list = []
@@ -101,43 +82,23 @@ def send_data():
                 sub_packet_length = int(len(packet)/sub_packet_count)
                 sender_check_sum = scs.gen_CheckSum(packet, sub_packet_length)
                 code_word = packet + sender_check_sum
-                code_word_list.append(code_word)
-
-            # packet_count = 4
-            # packet_length = int(len(data)/packet_count)
-            # sender_check_sum = scs.gen_CheckSum(data, packet_length)
-            # sent_data = data + sender_check_sum
-
-            for code_word in code_word_list:
                 sender_side_socket.sendall(str.encode("\n".join([str(code_word), str(choice)])))
                 receiver_response = sender_side_socket.recv(1024)
                 print(receiver_response.decode("utf-8"))
-                receiver_check_sum = sender_side_socket.recv(1024).decode("utf-8")
-                if int(receiver_check_sum) == 0:
-                    print("Error Checking Complete\nNo Error found in Receiver-data")
-                else:
-                    print("Error Checking Complete\nError found in Receiver-data")
-
-
-        elif choice == 4:
-            key = input("\nEnter the key for CRC-bit generation : ")
-            code_word_list = []
-            for packet in packet_list:
-                CRC_DATA = crc.gen_CRC(packet, key)
-                code_word = packet + CRC_DATA
                 code_word_list.append(code_word)
 
-            # key = input("Enter key for calculating CRC : ")
-            # crc_data = crc.gen_CRC(data, key)
-            # sent_data = data + crc_data
-
-            for code_word in code_word_list:
+        elif choice == 4:
+            # key = input("\nEnter the key for CRC-bit generation : ")
+            key = "10110"
+            code_word_list = []
+            for packet in packet_list:
+                crc_data = crc.gen_CRC(packet, key)
+                code_word = packet + crc_data
+                # code_word = gre.gen_rand_error(code_word, len(code_word))
                 sender_side_socket.sendall(str.encode("\n".join([str(code_word), str(choice)])))
-                receiver_response = sender_side_socket.recv(1024).decode("utf-8")
-                if int(receiver_response) == 0:
-                    print("Error Checking Complete\nNo Error found in Receiver-data")
-                else:
-                    print("Error Checking Complete\nError found in Receiver-data")
+                receiver_response = sender_side_socket.recv(1024)
+                print(receiver_response.decode("utf-8"))
+                code_word_list.append(code_word)
 
         else:
             print("\nWRONG INPUT! Input must be an integer b/w 1, 2, 3 and 4")
