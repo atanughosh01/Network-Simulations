@@ -1,6 +1,6 @@
 
 import random
-import GenRandError as gre
+import packages.GenRandError as gre
 
 with open("input.txt", "r") as file:
     data = file.read()
@@ -25,7 +25,7 @@ print("\nOriginal Packet List :", packet_list)
 
 corrupt_packet_list = []
 for packet in packet_list:
-    corrupt_packet = gre.gen_rand_error(packet, random.randint(0, 8))
+    corrupt_packet = gre.gen_rand_error(packet, random.randint(1, len(packet_list)))
     corrupt_packet_list.append(corrupt_packet)
     
 print("\nCorrupted Packet List :", corrupt_packet_list)
