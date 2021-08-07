@@ -2,23 +2,24 @@
 import random
 
 
-def gen_rand_error(data, count):
+def gen_rand_error(data: str, count: int) -> str:
     length = len(data)
     digit_list = list(data)
     k = random.sample(range(0, length), count)
     for index in k:
-        # This will replace digits at the specified index with 0 or 1
+        # This will replace 0-s at some positions with 1-s or 1-s with 0-s
+        # Number of flipped bits = count
         if digit_list[index] == '1':
             digit_list[index] = digit_list[index].replace('1', '0')
         elif digit_list[index] == '0':
             digit_list[index] = digit_list[index].replace('0', '1')
-    return ("" . join(digit_list))
+    return ("".join(digit_list))
 
 
 def main():
     string_to_modify = str(input("Enter the string to be modified : "))
-    total_places = int(input("Enter number of digits to be modified : "))
-    new_string = gen_rand_error(string_to_modify, total_places)
+    flip_count = int(input("Enter number of bits to be flipped : "))
+    new_string = gen_rand_error(string_to_modify, flip_count)
     print("The modified String is : " + new_string)
 
 
