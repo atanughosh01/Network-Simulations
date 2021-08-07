@@ -5,7 +5,6 @@ import packages.LRC as lrc
 import packages.CRC as crc
 import packages.GenRandError as gre
 import packages.senderCheckSum as scs
-import packages.receiverCheckSum as rcs
 
 with open("input.txt", "r") as file:
     data = file.read()
@@ -26,18 +25,36 @@ for i in range(packet_count):
 
 print("\nOriginal Packet List :", packet_list)
 
-key = input("\nEnter the key for CRC-bit generation : ")
+# code_word_list = []
+# for packet in packet_list:
+#     VRC_DATA = vrc.gen_VRC(packet)
+#     code_word = packet + VRC_DATA
+#     code_word_list.append(code_word)
+
+# code_word_list = []
+# for packet in packet_list:
+#     LRC_DATA = lrc.gen_LRC(packet)
+#     code_word = packet + LRC_DATA
+#     code_word_list.append(code_word)
+
+# key = input("\nEnter the key for CRC-bit generation : ")
+# code_word_list = []
+# for packet in packet_list:
+#     CRC_DATA = crc.gen_CRC(packet, key)
+#     code_word = packet + CRC_DATA
+#     code_word_list.append(code_word)
+
 code_word_list = []
 for packet in packet_list:
-    CRC_DATA = crc.gen_CRC(packet, key)
-    code_word = packet + CRC_DATA
+    CKSUM = scs.gen_CheckSum(packet, 8)
+    code_word = packet + CKSUM
     code_word_list.append(code_word)
 
-print("\nCode Word List :", code_word_list)
+print("\nCode-Word List :", code_word_list)
 
 for i in code_word_list:
     l = len(i)
-print("\nLength of each Code-Word = " + str(len(i)))
+print("\nLength of each Code-Word = " + str(l))
 
 corrupt_packet_list = []
 for packet in packet_list:
