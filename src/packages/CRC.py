@@ -33,7 +33,7 @@ def mod2div(divident, divisor):
 
 
 # Generates CRC for given data and key
-def gen_CRC(data, key):
+def gen_CRC(data: str, key: str) -> str:
     key_length = len(key)
     appended_data = data + '0'*(key_length-1)
     crc = mod2div(appended_data, key)
