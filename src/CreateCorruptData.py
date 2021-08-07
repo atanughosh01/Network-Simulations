@@ -1,14 +1,19 @@
 
 import random
+import packages.VRC as vrc
+import packages.LRC as lrc
+import packages.CRC as crc
 import packages.GenRandError as gre
+import packages.senderCheckSum as scs
+import packages.receiverCheckSum as rcs
 
 with open("input.txt", "r") as file:
     data = file.read()
 
 print("DATA = " + str(data))
 string_length = len(data)
-packet_count = 10
-packet_length = int(string_length/packet_count)
+packet_length = 32
+packet_count = int(string_length/packet_length)
 print("\nLength of data = " + str(string_length))
 print("Number of packets = " + str(packet_count))
 print("Length of each packet = " + str(packet_length))
@@ -20,8 +25,19 @@ for i in range(packet_count):
     packet_list.append(packet)
 
 print("\nOriginal Packet List :", packet_list)
-# for i in packet_list:
-#     print(len(i))
+
+key = input("\nEnter the key for CRC-bit generation : ")
+code_word_list = []
+for packet in packet_list:
+    CRC_DATA = crc.gen_CRC(packet, key)
+    code_word = packet + CRC_DATA
+    code_word_list.append(code_word)
+
+print("\nCode Word List :", code_word_list)
+
+for i in code_word_list:
+    l = len(i)
+print("\nLength of each Code-Word = " + str(len(i)))
 
 corrupt_packet_list = []
 for packet in packet_list:
