@@ -4,24 +4,22 @@ import packages.VRC as vrc
 import packages.LRC as lrc
 import packages.CRC as crc
 import packages.senderCheckSum as scs
-import packages.receiverCheckSum as rcs
-import packages.GenRandError as gre
-from _thread import start_new_thread
 
 
 def send_data():
     host = '127.0.0.1'
-    sender_port = 65432
+    sender_port = 65400
+    receiver_port = 65432
     sender_side_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try: sender_side_socket.connect((host, sender_port))
-    except socket.error as e:
-        print("Channel is Currently Inactive. Connection Failed!\n\nError : " + str(sys.exc_info()))
-        print("\nException Caught : " + str(e))
-        sys.exit()
+    except socket.error as se:
+        print("\nChannel is Currently Inactive. Connection Failed!\n\nError : " + str(sys.exc_info()))
+        print("\n[EXCEPTION] SOCK_ERR Caught : " + str(se))
+        sys.exit(1)
 
-    print("Channel is Currently Active.\nSend Request to Get Response From Receiver.")
-
+    print("\nChnnel is currently active.\nConnected to Sender via address : " + host + ':' + str(sender_port))
+    print("\nSend Request to Get Response From Receiver.")
     receiver_response = sender_side_socket.recv(1024)
 
     while True:
@@ -29,14 +27,14 @@ def send_data():
             with open("input.txt", "r") as file:
                 data = file.read()
         except FileNotFoundError as fnfe:
-            print("\nFILE_ERR : " + str(fnfe))
+            print("\n[EXCEPTION] FILE_ERR Caught : " + str(fnfe))
             sys.exit(1)
 
-        print("\nDATA = " + str(data))
+        print("\n\t----------------------------- NEW ITERATION -----------------------------\nDATA = " + str(data))
         string_length = len(data)
-        try: packet_length = int(input("\nEnter length of each packet : "))     # ENTER 32
-        except Exception as ve:
-            print("\nEXCEPTION : " + str(ve) + "\nExiting System.... Exited")
+        try: packet_length = int(input("\nEnter length of each packet (Should be greater than 8): "))     # ENTER 32
+        except Exception as ex:
+            print("\n[EXCEPTION] Error Caught : " + str(ex) + "\nExiting System.... Exited")
             sys.exit(1)
 
         packet_count = int(string_length/packet_length)
@@ -51,11 +49,20 @@ def send_data():
             packet_list.append(packet)
 
         print("\nOriginal Packet List :", packet_list)
-
         print("\nGenerate Redundant data -> Select 1 for VRC, 2 for LRC, 3 for CheckSum, 4 for CRC ")
-        choice = int(input("Enter Your Choice (1, 2, 3 or 4) : "))
+        try: choice = int(input("\nEnter Your Choice (1, 2, 3 or 4 (Enter 0 to exit system)) : "))
+        except ValueError as ve:
+            print("[EXCEPTION] ValueError Caught : " + str(ve) + "\nOnly integer inputs are allowed. Try again -->")
+            continue
 
-        if choice == 1:
+        if choice == 0:
+            code_word = "NULL"
+            sender_side_socket.sendall(str.encode("\n".join(str(code_word), str(choice))))
+            print("\nExiting system.... Exited")
+            sender_side_socket.close()
+            sys.exit(1)
+
+        elif choice == 1:
             code_word_list = []
             for packet in packet_list:
                 vrc_data = vrc.gen_VRC(packet)
@@ -94,7 +101,6 @@ def send_data():
             for packet in packet_list:
                 crc_data = crc.gen_CRC(packet, key)
                 code_word = packet + crc_data
-                # code_word = gre.gen_rand_error(code_word, len(code_word))
                 sender_side_socket.sendall(str.encode("\n".join([str(code_word), str(choice)])))
                 receiver_response = sender_side_socket.recv(1024)
                 print(receiver_response.decode("utf-8"))

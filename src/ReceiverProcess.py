@@ -3,7 +3,6 @@ import socket
 import packages.VRC as vrc
 import packages.LRC as lrc
 import packages.CRC as crc
-import packages.senderCheckSum as scs
 import packages.receiverCheckSum as rcs
 from _thread import start_new_thread
 
@@ -18,21 +17,21 @@ def receive_data():
         receiver_side_socket.bind((host, receiver_port))
         n = int(input("Enter No. of Sender(s) You Want to Keep Waiting : "))
         max = int(input("Enter Max No. of Senders Allowed to send Request : "))
-        receiver_side_socket.listen(n)                  # queue up to 'n' requests
+        receiver_side_socket.listen(n)                   # queue up to 'n' requests
         print("Socket Has Been Created." + "\nReceiver is Now Listening...." +
               "\nWaiting For Channel(s)/Sender(s) to Connect....")
 
-    except socket.error as e:
+    except socket.error as se:
         print("Bind Failed! Error : " + str(sys.exc_info()))
-        print("Exception Caught : " + str(e))
+        print("[EXCEPTION] Error Caught : " + str(se))
         receiver_side_socket.close()
-        sys.exit()
+        sys.exit(1)
 
-    except ValueError as v:
-        print("Exception Caught : " + str(v))
-        print("Receiver Has Been Terminated." + "\nEnter Integer Only From Next Time.")
+    except ValueError as ve:
+        print("[EXCEPTION] Error Caught : " + str(ve))
+        print("Receiver Has Been Terminated.\nEnter Integer Only From Next Time.")
         receiver_side_socket.close()
-        sys.exit()
+        sys.exit(1)
 
     while thread_count <= max:
         channel, address = receiver_side_socket.accept()
