@@ -9,82 +9,65 @@ from _thread import start_new_thread
 
 def receive_data():
     host = '127.0.0.1'
-    receiver_port = 65432                                # arbitrary non-privileged port
+    port = 65432                                # arbitrary non-privileged port
     thread_count = 0
     receiver_side_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     try:
-        receiver_side_socket.bind((host, receiver_port))
-        n = int(input("Enter No. of Sender(s) You Want to Keep Waiting : "))
-        max = int(input("Enter Max No. of Senders Allowed to send Request : "))
-        receiver_side_socket.listen(n)                   # queue up to 'n' requests
-        print("Socket Has Been Created." + "\nReceiver is Now Listening...." +
-              "\nWaiting For Channel(s)/Sender(s) to Connect....")
+        receiver_side_socket.bind((host, port))
+        max = int(input("\nEnter max number of senders sllowed to send request : "))
+        receiver_side_socket.listen(1)
+        print("\nSocket has been created.\nReceiver is now listening.\nWaiting for sender(s) to connect....")
 
-    except socket.error as se:
-        print("Bind Failed! Error : " + str(sys.exc_info()))
-        print("[EXCEPTION] Error Caught : " + str(se))
+    except Exception as ex:
+        print("\n[ERROR 1] Error Description : " + str(sys.exc_info()))
+        print("[EXCEPTION 1] Exception : " + str(ex))
         receiver_side_socket.close()
-        sys.exit(1)
-
-    except ValueError as ve:
-        print("[EXCEPTION] Error Caught : " + str(ve))
-        print("Receiver Has Been Terminated.\nEnter Integer Only From Next Time.")
-        receiver_side_socket.close()
+        print("\nReceiver has been terminated. Socket has been closed.")
         sys.exit(1)
 
     while thread_count <= max:
-        channel, address = receiver_side_socket.accept()
-        ip, receiver_port = str(address[0]), str(address[1])
-        print("\nConnected to : " + ip + ':' + receiver_port)
-        start_new_thread(channel_thread, (channel, ))
+        sender_connection, address = receiver_side_socket.accept()
+        ip, port = str(address[0]), str(address[1])
+        print("\nConnected to sender via address : " + ip + ':' + port)
+        start_new_thread(channel_thread, (sender_connection, ))
         thread_count += 1
-        print("Thread Number = Sender Number = Channel Number = " + str(thread_count))
+        print("Thread number = Sender number = " + str(thread_count))
 
-    print(f"\nMore Than {max} Senders/Channels aren't allowed to send request(s).")
-    print("Receiver has been closed.")
+    print(f"\nMore than {max} senders aren't allowed to send request(s).")
+    print("Receiver has been terminated. Socket has been closed.")
 
 
 def channel_thread(connection: socket.socket):
-    connection.send(str.encode("Receiver is Working : "))
     while True:
         sender_request = connection.recv(2048)
         receiver_data, choice = [str(i) for i in sender_request.decode("utf-8").split("\n")]
 
         if choice == '1':
             vrc_data = vrc.gen_VRC(receiver_data)
-            if vrc_data == '0':
-                receiver_response = "\nError Checking Complete\nNo Error found in Receiver-data"
-            else:
-                receiver_response = "\nError Checking Complete\nError found in Receiver-data"
+            if int(vrc_data) == 0: receiver_response = "\nNO ERROR HAS BEEN FOUND"
+            else: receiver_response = "\nERROR HAS BEEN FOUND"
             connection.sendall(str.encode(receiver_response))
 
         elif choice == '2':
             lrc_data = lrc.gen_LRC(receiver_data)
-            if lrc_data == '0':
-                receiver_response = "\nError Checking Complete\nNo Error found in Receiver-data"
-            else:
-                receiver_response = "\nError Checking Complete\nError found in Receiver-data"
+            if int(lrc_data) == 0: receiver_response = "\nNO ERROR HAS BEEN FOUND"
+            else: receiver_response = "\nERROR HAS BEEN FOUND"
             connection.sendall(str.encode(receiver_response))
 
         elif choice == '3':
             packet_count = 5
             packet_length = int(len(receiver_data)/packet_count)
-            receiver_check_sum = rcs.gen_CheckSum(receiver_data, packet_length)
-            if int(receiver_check_sum) == 0:
-                receiver_response = "\nError Checking Complete\nNo Error found in Receiver-data"
-            else:
-                receiver_response = "\nError Checking Complete\nError found in Receiver-data"
+            receiver_checksum = rcs.gen_CheckSum(receiver_data, packet_length)
+            if int(receiver_checksum) == 0: receiver_response = "\nNO ERROR HAS BEEN FOUND"
+            else: receiver_response = "\nERROR HAS BEEN FOUND"
             connection.sendall(str.encode(receiver_response))
 
         elif choice == '4':
-            # key = input("\nEnter key for calculating CRC \n(Must be same as Sender's Key to get authentic results) : ")
             key = "10110"
             crc_data = crc.gen_CRC(receiver_data, key)
-            if int(crc_data) == 0:
-                receiver_response = "\nError Checking Complete\nNo Error found in Receiver-data"
-            else:
-                receiver_response = "\nError Checking Complete\nError found in Receiver-data"
+            if int(crc_data) == 0: receiver_response = "\nNO ERROR HAS BEEN FOUND"
+            else: receiver_response = "\nERROR HAS BEEN FOUND"
             connection.sendall(str.encode(receiver_response))
 
 
