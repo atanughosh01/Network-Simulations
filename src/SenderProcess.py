@@ -40,6 +40,7 @@ def start_sender():
         print("Number of packets = " + str(packet_count))
         print("Length of each packet = " + str(packet_length))
 
+        # generates data-packets by breaking down the data
         packet_list = []
         for i in range(packet_count):
             k = packet_length
