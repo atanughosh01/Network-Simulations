@@ -1,4 +1,4 @@
-
+# parses through the result-files to display accuracy report
 import sys
 
 while True:
