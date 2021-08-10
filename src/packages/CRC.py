@@ -1,6 +1,6 @@
 
 # Performs XOR betwwen two binary numbers reprensented as strings
-def xor(x, y):
+def xor(x: str, y: str) -> str:
     result = ""
     for i in range(1, len(y)):
         if x[i] == y[i]:
@@ -11,15 +11,15 @@ def xor(x, y):
 
 
 # Performs Modulo-2 division
-def mod2div(divident, divisor):
+def mod2div(dividend: str, divisor: str) -> str:
     divisor_length = len(divisor)
-    tmp = divident[0: divisor_length]
-    while divisor_length < len(divident):
+    tmp = dividend[0: divisor_length]
+    while divisor_length < len(dividend):
         if tmp[0] == '1':
-            # replace the divident by the result of XOR and pull 1 bit down
-            tmp = xor(divisor, tmp) + divident[divisor_length]
+            # replace the dividend by the result of XOR and pull 1 bit down
+            tmp = xor(divisor, tmp) + dividend[divisor_length]
         else:
-            tmp = xor('0'*divisor_length, tmp) + divident[divisor_length]
+            tmp = xor('0'*divisor_length, tmp) + dividend[divisor_length]
         divisor_length += 1
 
     # For the last n bits, we have to carry it out normally as increased value of
