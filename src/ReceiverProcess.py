@@ -27,6 +27,7 @@ def receive_data():
         print("\nReceiver has been terminated. Socket has been closed.")
         sys.exit(1)
 
+    # do untill thread-count is not greater than the maximum limit
     while thread_count <= max:
         sender_connection, address = receiver_side_socket.accept()
         ip, port = str(address[0]), str(address[1])
@@ -39,6 +40,7 @@ def receive_data():
     print("Receiver has been terminated. Socket has been closed.")
 
 
+# senders are connected via single threads to the multithreaded receiver
 def sender_thread(connection: socket.socket):
     while True:
         sender_request = connection.recv(2048)
