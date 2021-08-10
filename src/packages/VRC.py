@@ -5,10 +5,10 @@ def gen_VRC(data: str) -> str:
         if i == '1':
             count += 1
     if count % 2 != 0:
-        VRC_BIT = '1'
+        vrc_bit = '1'
     else:
-        VRC_BIT = '0'
-    return VRC_BIT
+        vrc_bit = '0'
+    return vrc_bit
 
 
 def main():
