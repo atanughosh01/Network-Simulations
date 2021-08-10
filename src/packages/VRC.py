@@ -1,4 +1,5 @@
 
+# generates even-parity for given string of 1-s and 0-s
 def gen_VRC(data: str) -> str:
     count = 0
     for i in data:
