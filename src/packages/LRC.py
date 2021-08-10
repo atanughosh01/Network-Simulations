@@ -1,4 +1,4 @@
-
+# generates even-parity for given string of 1-s and 0-s
 def gen_VRC(data: str) -> str:
     count = 0
     for i in data:
@@ -10,7 +10,7 @@ def gen_VRC(data: str) -> str:
         vrc_bit = '0'
     return vrc_bit
 
-
+# generates 2-D parity for given data string
 def gen_LRC(data: str) -> str:
     packet_list = []
     for count in range(0, 32, 8):
