@@ -1,4 +1,3 @@
-# Error-Detection-Python
+# Network-Simulations
 
-SourceCode and detailed report on error detection techniques using VRC, LRC, CheckSum and CRC algorithms
-(As a part of Computer Network Lab Assignment from BCSE course)
+SourceCodes and detailed reports on different Network Simulation techniques
