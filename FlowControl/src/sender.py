@@ -13,7 +13,7 @@ class Sender:
     def __init__(self) -> None:
         pass
 
-    def send():
+    def send_pkt():
         pass
 
     def recv_ack():
