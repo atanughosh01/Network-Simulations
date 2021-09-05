@@ -13,7 +13,7 @@ class Receiver:
     def __init__(self) -> None:
         pass
 
-    def recv():
+    def recv_pkt():
         pass
 
     def send_ack():
