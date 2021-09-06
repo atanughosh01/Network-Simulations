@@ -16,8 +16,8 @@ def receive_data():
 
     try:
         receiver_side_socket.bind((host, port))
-        max = int(input("\nEnter max number of senders sllowed to send request : "))
-        receiver_side_socket.listen(1)
+        max = int(input("\nEnter max number of senders allowed to send request : "))
+        receiver_side_socket.listen(5)
         print("\nSocket has been created.\nReceiver is now listening.\nWaiting for sender(s) to connect....")
 
     except Exception as ex:
