@@ -5,7 +5,7 @@ import socket
 import random
 import threading
 import packages.const as const
-from packages.template import *
+from template import *
 from _thread import start_new_thread
 import packages.go_back_N as go_back_N
 import packages.stop_and_wait as stop_and_wait
@@ -15,8 +15,8 @@ import packages.selective_repeat as selective_repeat
 class Channel:
 
     def __init__(self) -> None:
+        self.port = 65432
         self.host = '127.0.0.1'
-        self.port = 65432                                # arbitrary non-privileged port
         self.thread_count = 0
         self.channel_side_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.channel_side_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -25,7 +25,6 @@ class Channel:
             self.channel_side_socket.bind((self.host, self.port))
             self.channel_side_socket.listen(5)
             print("\nSocket has been created.\nChannel is waiting for client(s) to connect....")
-
         except Exception as ex:
             print("\n[ERROR 1] Error Description : " + str(sys.exc_info()))
             print("[EXCEPTION 1] Exception : " + str(ex))
@@ -46,40 +45,40 @@ class Channel:
     def send_packet_to_receiver(self, sender_conn: socket.socket):
         time.sleep(0.5)
         while True:
-            packet = sender_conn.recv(1024).decode('utf-8')             # data-packet
+            pkt = sender_conn.recv(1024).decode('utf-8')             # data-packet
             receiver_conn, addr = sender_conn.accept()
             if random.random() <= const.drop_out_prob:
                 print("CHANNEL : Packet has been discarded")
             else:
                 if random.random() <= const.err_inject_prob:
                     print("CHANNEL : Injecting BIT-Error in Packet")
-                    self.inject_biterror(packet)
+                    self.inject_biterror(pkt)
 
                 if random.random() <= const.delay_prob: 
                     print("CHANNEL : Introducing delay in Packet")                        
                     time.sleep(const.delay)
                     
-                receiver_conn.send(packet)
+                receiver_conn.send(pkt)
                 print("CHANNEL : Packet has been sent")
 
 
     def send_ack_to_sender(self, receiver_conn: socket.socket):
         time.sleep(0.5)
         while True:
-            ackmnt = receiver_conn.recv(1024).decode('utf-8')            # acknowledgement
+            ack = receiver_conn.recv(1024).decode('utf-8')            # acknowledgement
             sender_conn, addr = receiver_conn.accept()
             if random.random() <= const.drop_out_prob:
                 print("CHANNEL : Packet has been dropped out")
             else:
                 if random.random() <= const.err_inject_prob:
                     print("CHANNEL : Injecting BIT-Error in Acknowledgement")
-                    self.inject_biterror(ackmnt)
+                    self.inject_biterror(ack)
 
                 if random.random() <= const.delay_prob: 
                     print("CHANNEL : Introducing delay in Acknowledgement")                        
                     time.sleep(const.delay)
     
-                sender_conn.send(ackmnt)
+                sender_conn.send(ack)
                 print("CHANNEL : Acknowledgement has been sent")
 
 
@@ -92,7 +91,7 @@ class Channel:
         while sndr_thrd_cnt <= const.total_sender_number:
             conn, addr = self.channel_side_socket.accept()
             ip, port = str(addr[0]), str(addr[1])
-            with open("sndr_addr.txt", 'a') as sndr_addr: sndr_addr.write(str(addr) + "\n")
+            with open("textfiles/sndr_addr.txt", 'a') as sndr_addr: sndr_addr.write(str(addr) + "\n")
             print("\nConnected to sender via address : " + ip + ':' + port)
             pkt_thrd = threading.Thread(name= 'PacketThread-' + str(sndr_thrd_cnt+1), target=self.send_packet_to_receiver, args=(conn,))
             sender_to_receiver_pkt_threadlist.append(pkt_thrd)
@@ -102,7 +101,7 @@ class Channel:
         while recvr_thrd_cnt <= const.total_receiver_number:
             conn, addr = self.channel_side_socket.accept()
             ip, port = str(addr[0]), str(addr[1])
-            with open("recv_addr.txt", 'a') as recv_addr: recv_addr.write(str(addr) + "\n")
+            with open("textfiles/recv_addr.txt", 'a') as recv_addr: recv_addr.write(str(addr) + "\n")
             print("\nConnected to receiver via address : " + ip + ':' + port)
             ackn_thrd = threading.Thread(name= 'AckmntThread-' + str(recvr_thrd_cnt+1), target=self.send_ack_to_sender, args=(conn,))
             receiver_to_sender_ack_thread_list.append(ackn_thrd)
@@ -122,7 +121,6 @@ class Channel:
             thread.join()
 
 
-
 if __name__ == "__main__":
-    ch = Channel()
-    ch.initiate_channel_process()
+    chnl = Channel()
+    chnl.initiate_channel_process()
