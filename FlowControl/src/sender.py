@@ -5,7 +5,7 @@ import socket
 import random
 import threading
 import packages.const as const
-from packages.template import *
+from template import *
 from _thread import start_new_thread
 import packages.go_back_N as go_back_N
 import packages.stop_and_wait as stop_and_wait
@@ -20,7 +20,7 @@ class Sender:
         self.sndr_thread_count = 0
         self.MAX = const.total_sender_number
 
-    def gen_pkt(self) -> list[str]:
+    def gen_pkt(self) -> list:
         self.data = read_file("textfiles/input.txt")
         self.packet_list = create_pkt(self.data)
         return self.packet_list
@@ -58,20 +58,24 @@ class Sender:
 
             elif choice == 1:
                 for packet in self.packet_list:
-                    encoded_data = str(stop_and_wait.encode(packet))
-                    self.send_pkt(encoded_data, self.sender_side_socket)
+                    # encoded_data = str(stop_and_wait.encode(packet))
+                    encoded_data = str(packet)
+                    pkt_to_be_sent = str.encode("\n".join([str(encoded_data), str(choice)]))
+                    self.send_pkt(pkt_to_be_sent, self.sender_side_socket)
                     self.ack = self.recv_ack(self.sender_side_socket)
 
             elif choice == 2:
                 for packet in self.packet_list:
-                    encoded_data = str(go_back_N.encode(packet))
-                    self.send_pkt(encoded_data, self.sender_side_socket)
+                    encoded_data = str(stop_and_wait.encode(packet))
+                    pkt_to_be_sent = str.encode("\n".join([str(encoded_data), str(choice)]))
+                    self.send_pkt(pkt_to_be_sent, self.sender_side_socket)
                     self.ack = self.recv_ack(self.sender_side_socket)
 
             elif choice == 3:
                 for packet in self.packet_list:
-                    encoded_data = str(selective_repeat.encode(packet))
-                    self.send_pkt(encoded_data, self.sender_side_socket)
+                    encoded_data = str(stop_and_wait.encode(packet))
+                    pkt_to_be_sent = str.encode("\n".join([str(encoded_data), str(choice)]))
+                    self.send_pkt(pkt_to_be_sent, self.sender_side_socket)
                     self.ack = self.recv_ack(self.sender_side_socket)
 
             else:
@@ -81,4 +85,5 @@ class Sender:
 
 if __name__ == "__main__":
     sndr = Sender()
-    print(sndr.gen_pkt())
+    sndr.initiate_sender_process()
+    # print(sndr.gen_pkt())
