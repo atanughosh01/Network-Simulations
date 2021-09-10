@@ -92,6 +92,7 @@ class Channel:
         while sndr_thrd_cnt <= const.total_sender_number:
             conn, addr = self.channel_side_socket.accept()
             ip, port = str(addr[0]), str(addr[1])
+            with open("sndr_addr.txt", 'a') as sndr_addr: sndr_addr.write(str(addr) + "\n")
             print("\nConnected to sender via address : " + ip + ':' + port)
             pkt_thrd = threading.Thread(name= 'PacketThread-' + str(sndr_thrd_cnt+1), target=self.send_packet_to_receiver, args=(conn,))
             sender_to_receiver_pkt_threadlist.append(pkt_thrd)
@@ -101,6 +102,7 @@ class Channel:
         while recvr_thrd_cnt <= const.total_receiver_number:
             conn, addr = self.channel_side_socket.accept()
             ip, port = str(addr[0]), str(addr[1])
+            with open("recv_addr.txt", 'a') as recv_addr: recv_addr.write(str(addr) + "\n")
             print("\nConnected to receiver via address : " + ip + ':' + port)
             ackn_thrd = threading.Thread(name= 'AckmntThread-' + str(recvr_thrd_cnt+1), target=self.send_ack_to_sender, args=(conn,))
             receiver_to_sender_ack_thread_list.append(ackn_thrd)
