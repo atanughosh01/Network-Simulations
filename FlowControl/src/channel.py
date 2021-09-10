@@ -5,6 +5,7 @@ import const
 import socket
 import random
 import threading
+from template import *
 from _thread import start_new_thread
 import packages.go_back_N as go_back_N
 import packages.stop_and_wait as stop_and_wait
@@ -22,9 +23,8 @@ class Channel:
 
         try:
             self.channel_side_socket.bind((self.host, self.port))
-            # max = int(input("\nEnter max number of Receivers/Senders allowed to send request : "))
             self.channel_side_socket.listen(5)
-            # print("\nSocket has been created.\nChannel is waiting for client(s) to connect....")
+            print("\nSocket has been created.\nChannel is waiting for client(s) to connect....")
 
         except Exception as ex:
             print("\n[ERROR 1] Error Description : " + str(sys.exc_info()))
