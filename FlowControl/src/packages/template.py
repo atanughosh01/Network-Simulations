@@ -4,12 +4,24 @@ import const
 
 def read_file(filename: str) -> str:
     try:
-        with open(filename, "r") as text_file:
-            data_str = text_file.read()
+        with open(filename, "r") as fptr:
+            data_str = fptr.read()
     except FileNotFoundError as fnfe:
-        print("\n[EXCEPTION] FILE_ERR Caught : " + str(fnfe))
+        print("\n[READ_EXCEPTION] FILE_ERR Caught : " + str(fnfe))
         sys.exit(1)
     return data_str
+
+
+def write_into_file(info: str, filename: str):
+    try:
+        with open(filename, "a+") as fptr:
+            fptr.seek(0)
+            data_str = fptr.read(100)
+            if len(data_str) > 0: fptr.write("\n")
+            fptr.write(info)
+    except FileNotFoundError as fnfe:
+        print("\n[WRITE_EXCEPTION] FILE_ERR Caught : " + str(fnfe))
+        sys.exit(1)
 
 
 def create_pkt(data: str) -> list[str]:

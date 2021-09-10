@@ -1,10 +1,11 @@
 import os
 import sys
-import const
+import time
 import socket
 import random
 import threading
-from template import *
+import packages.const as const
+from packages.template import *
 from _thread import start_new_thread
 import packages.go_back_N as go_back_N
 import packages.stop_and_wait as stop_and_wait
@@ -26,7 +27,6 @@ class Receiver:
             self.max = int(input("\nEnter max number of receivers : "))
             self.receiver_side_socket.listen(5)
             print("\nSocket has been created.\nReceivers are listening.\nWaiting for sender(s) to connect....")
-
         except Exception as ex:
             print("\n[ERROR 1] Error Description : " + str(sys.exc_info()))
             print("[EXCEPTION 1] Exception : " + str(ex))
