@@ -40,6 +40,8 @@ class Receiver:
             self.receiver_side_socket.close()
             sys.exit(1)
 
+        print("\nChannel is currently active.\Waiting for sender to send request.")
+
         self.sndr_req = self.receiver_side_socket.recv(2048)
         recvd_pkt, choice = [str(i) for i in self.sndr_req.decode("utf-8").split("\n")]
 

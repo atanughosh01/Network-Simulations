@@ -88,16 +88,7 @@ class Channel:
         sndr_thrd_cnt = 0
         recvr_thrd_cnt = 0
         print("\nCHANNEL is running")
-        while sndr_thrd_cnt <= const.total_sender_number:
-            conn, addr = self.channel_side_socket.accept()
-            ip, port = str(addr[0]), str(addr[1])
-            with open("textfiles/sndr_addr.txt", 'a') as sndr_addr: sndr_addr.write(str(addr) + "\n")
-            print("\nConnected to sender via address : " + ip + ':' + port)
-            pkt_thrd = threading.Thread(name= 'PacketThread-' + str(sndr_thrd_cnt+1), target=self.send_packet_to_receiver, args=(conn,))
-            sender_to_receiver_pkt_threadlist.append(pkt_thrd)
-            sndr_thrd_cnt += 1
-            print("Thread number = Sender number = " + str(sndr_thrd_cnt))
-            
+
         while recvr_thrd_cnt <= const.total_receiver_number:
             conn, addr = self.channel_side_socket.accept()
             ip, port = str(addr[0]), str(addr[1])
@@ -108,10 +99,20 @@ class Channel:
             recvr_thrd_cnt += 1
             print("Thread number = Receiver number = " + str(recvr_thrd_cnt))
 
-        for thread in sender_to_receiver_pkt_threadlist:
-            thread.start()
-            
+        while sndr_thrd_cnt <= const.total_sender_number:
+            conn, addr = self.channel_side_socket.accept()
+            ip, port = str(addr[0]), str(addr[1])
+            with open("textfiles/sndr_addr.txt", 'a') as sndr_addr: sndr_addr.write(str(addr) + "\n")
+            print("\nConnected to sender via address : " + ip + ':' + port)
+            pkt_thrd = threading.Thread(name= 'PacketThread-' + str(sndr_thrd_cnt+1), target=self.send_packet_to_receiver, args=(conn,))
+            sender_to_receiver_pkt_threadlist.append(pkt_thrd)
+            sndr_thrd_cnt += 1
+            print("Thread number = Sender number = " + str(sndr_thrd_cnt))
+
         for thread in receiver_to_sender_ack_thread_list:
+            thread.start()
+
+        for thread in sender_to_receiver_pkt_threadlist:
             thread.start()
 
         for thread in sender_to_receiver_pkt_threadlist:
