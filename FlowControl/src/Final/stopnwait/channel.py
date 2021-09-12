@@ -108,13 +108,6 @@ class Channel():
 
 
 if __name__ == '__main__':
-    # Main()
-    '''totalsen = 2
-    print('Number of senders',totalsen)
-    totalrecv = 2
-    print('Number of receivers',totalrecv)
-
-    '''
     totalsen = int(input('Enter number of senders: '))
     totalrecv = int(input('Enter number of receivers: '))
 
@@ -124,40 +117,3 @@ if __name__ == '__main__':
     ch.processData()
     ch.closeSenders()
     ch.closeReceivers()
-'''
-def Main():
-	senderhost = "127.0.0.1"
-	senderport = 8080
-	
-	
-	
-	
-	senderSocket = socket.socket()
-	senderSocket.bind((host, port))
-	
-	senderSocket.listen(totalsen)
-	connections = []
-	for i in range(1,totalsen+1):
-		conn = senderSocket.accept()
-		connections.append(conn)
-	#conn, addr = mySocket.accept()
-	
-	arr = []
-	
-	while True:
-		for conn in connections:
-			print(conn[1])
-			data = conn[0].recv(1024).decode()
-			
-			if not data:
-				break
-			
-			print("from connected user: ", str(data))
-		if data == "exit":
-			break
-		
-	for conn in connections:
-		conn[0].close()
-	'''
-
-# <socket.socket fd=572, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 54920), raddr=('127.0.0.1', 8080)>/q/('127.0.0.1', 54921)

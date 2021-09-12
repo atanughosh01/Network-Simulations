@@ -111,13 +111,8 @@ class Channel():
                 rdata = str(rdata)
                 time.sleep(0.5)
                 curtime = time.time()
-                if curtime-prevtime > 2:
-                    timeout = 1
-                    newdata += 'TIMEOUT'
-                else:
-                    timeout = 0
-                    newdata += rdata
-
+                if curtime-prevtime > 2: newdata += 'TIMEOUT'
+                else: newdata += rdata
                 self.slidingwindow.append([data, newdata, i, recvno])
 
                 msg = extract_message(newdata)
@@ -142,7 +137,7 @@ class Channel():
                                 flag = 1
                                 break
                             idx += 1
-                            
+
                         print(' ------------------------------ ')
                         if flag == 1: print('RESEND FROM FRAME NO:', str(idx+1))
                         else: print('BLOCK OF WINDOW SIZE', self.windowsize, 'SUCCESSFULLY SENT')
