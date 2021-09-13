@@ -1,5 +1,5 @@
-import socket
 import sys
+import socket
 
 
 def create_frame(data):
