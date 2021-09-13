@@ -1,5 +1,5 @@
-import socket
 import time
+import socket
 import random
 
 
@@ -107,7 +107,7 @@ class Channel():
                 rconn[0].sendto(newdata.encode(), rconn[1])
 
                 # received from receiver
-                rdata = rconn[0].recv(1024).decode()
+                rdata = rconn[0].recv(1024).decode('utf-8')
                 rdata = str(rdata)
                 time.sleep(0.5)
                 curtime = time.time()
