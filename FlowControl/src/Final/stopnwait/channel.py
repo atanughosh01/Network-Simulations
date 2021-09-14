@@ -56,6 +56,7 @@ class Channel():
         for conn in self.receiverconn: conn[0].close()
         print('Closed all receiver connections')
 
+
     def process_data(self):
         while True:
             for i in range(len(self.senderconn)):
