@@ -18,7 +18,7 @@ def extract_message(frame):
             break
     return frame[:endidx]
 
-
+'''
 def extract_count(frame):
     startidx = -1
     endidx = -1
@@ -39,7 +39,7 @@ def extract_status(frame):
             startidx = i+1
             break
     return frame[startidx:]
-
+'''
 
 def Main(senderno):
     count = 0
