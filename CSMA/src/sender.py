@@ -5,7 +5,8 @@ import socket
 def create_frame(data):
     count_ones = 0
     for ch in data:
-        if ch == '1': count_ones += 1
+        if ch == '1':
+            count_ones += 1
     data += str(count_ones % 2)
     return data
 
@@ -24,8 +25,10 @@ def extract_count(frame):
     endidx = -1
     for i in range(len(frame)-1):
         if frame[i] == '/':
-            if startidx == -1: startidx = i+1
-            else: endidx = i
+            if startidx == -1:
+                startidx = i+1
+            else:
+                endidx = i
     cnt = frame[startidx:endidx]
     return int(cnt)
 
@@ -34,7 +37,8 @@ def extract_status(frame):
     count = 0
     startidx = -1
     for i in range(len(frame)-1):
-        if frame[i] == '/': count += 1
+        if frame[i] == '/':
+            count += 1
         if count == 2 and startidx == -1:
             startidx = i+1
             break
@@ -60,13 +64,17 @@ def Main(senderno):
         sender_side_socket.send(data.encode())
         sent_frames.append(data)
         count += 1
-        if not msg: break
-        if msg == 'q0': break
-        
+        if not msg:
+            break
+        if msg == 'q0':
+            break
+
     sender_side_socket.close()
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1: senderno = int(sys.argv[1])
-    else: senderno = 1
+    if len(sys.argv) > 1:
+        senderno = int(sys.argv[1])
+    else:
+        senderno = 1
     Main(senderno)
