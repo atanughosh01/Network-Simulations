@@ -1,10 +1,10 @@
 import sys
 import socket
+from _thread import start_new_thread
 import packages.VRC as vrc
 import packages.LRC as lrc
 import packages.CRC as crc
 import packages.receiverCheckSum as rcs
-from _thread import start_new_thread
 
 
 def receive_data():
@@ -16,11 +16,11 @@ def receive_data():
 
     try:
         receiver_side_socket.bind((host, port))
-        max = int(input("\nEnter max number of senders allowed to send request : "))
+        max_sndr = int(input("\nEnter max number of senders allowed to send request : "))
         receiver_side_socket.listen(5)
         print("\nSocket has been created.\nReceiver is now listening.\nWaiting for sender(s) to connect....")
 
-    except Exception as ex:
+    except ValueError as ex:
         print("\n[ERROR 1] Error Description : " + str(sys.exc_info()))
         print("[EXCEPTION 1] Exception : " + str(ex))
         receiver_side_socket.close()
@@ -28,7 +28,7 @@ def receive_data():
         sys.exit(1)
 
     # do untill thread-count is not greater than the maximum limit
-    while thread_count <= max:
+    while thread_count <= max_sndr:
         sender_connection, address = receiver_side_socket.accept()
         ip, port = str(address[0]), str(address[1])
         print("\nConnected to sender via address : " + ip + ':' + port)
@@ -36,7 +36,7 @@ def receive_data():
         thread_count += 1
         print("Thread number = Sender number = " + str(thread_count))
 
-    print(f"\nMore than {max} senders aren't allowed to send request(s).")
+    print(f"\nMore than {max_sndr} senders aren't allowed to send request(s).")
     print("Receiver has been terminated. Socket has been closed.")
 
 
@@ -67,7 +67,7 @@ def sender_thread(connection: socket.socket):
             connection.sendall(str.encode(receiver_response))
 
         elif choice == '4':
-            # key = "111010101"                                       # CRC-8 (x^8 + x^7 + x^6 + x^4 + x^2 + 1)
+            # key = "111010101"                                     # CRC-8 (x^8 + x^7 + x^6 + x^4 + x^2 + 1)
             key = "11000000000000101"                               # CRC-16 (x^16 + x^15 + x^2 + 1)
             crc_data = crc.gen_CRC(receiver_data, key)
             if int(crc_data) == 0: receiver_response = "NO ERROR HAS BEEN FOUND"
@@ -75,9 +75,5 @@ def sender_thread(connection: socket.socket):
             connection.sendall(str.encode(receiver_response))
 
 
-def main():
-    receive_data()
-
-
 if __name__ == "__main__":
-    main()
+    receive_data()

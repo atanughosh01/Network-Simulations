@@ -1,12 +1,9 @@
-
 # Performs XOR betwwen two binary numbers reprensented as strings
 def xor(x: str, y: str) -> str:
     result = ""
     for i in range(1, len(y)):
-        if x[i] == y[i]:
-            result += "0"
-        else:
-            result += "1"
+        if x[i] == y[i]: result += "0"
+        else: result += "1"
     return result
 
 
@@ -24,10 +21,8 @@ def mod2div(dividend: str, divisor: str) -> str:
 
     # For the last n bits, we have to carry it out normally as increased value of
     # divisor_length will cause IndexOutOfBoundsException.
-    if tmp[0] == '1':
-        tmp = xor(divisor, tmp)
-    else:
-        tmp = xor('0'*divisor_length, tmp)
+    if tmp[0] == '1': tmp = xor(divisor, tmp)
+    else: tmp = xor('0'*divisor_length, tmp)
     rem = tmp
     return rem
 
@@ -41,14 +36,10 @@ def gen_CRC(data: str, key: str) -> str:
 
 
 # Main() method to implement functionalities
-def main():
+if __name__ == "__main__":
     data = "100100011110"
     key = "10011"
     crc = gen_CRC(data, key)
     data_word = data + crc
     print("\nData = " + str(data) + "\nKey = " + str(key) +
           "\nGenerated CRC = " + str(crc) + "\nDataWord  = " + str(data_word) + "\n")
-
-
-if __name__ == "__main__":
-    main()

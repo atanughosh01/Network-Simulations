@@ -30,7 +30,7 @@ def gen_CheckSum(data: str, k: int) -> str:
 
 
 # Main() method to implement functionalities
-def main():
+if __name__ == "__main__":
     data = "1001010101100011100101001110110010000101"
     packet_count = 5
     packet_length = int(len(data)/packet_count)
@@ -45,7 +45,4 @@ def main():
           "\nLength of CheckSum = " + str(len(receiver_check_sum)) +
           "\nDataWord = " + str(data_word) +
           "\nLength of DataWord = " + str(len(data_word)) + "\n")
-
-
-if __name__ == "__main__":
-    main()
+ 

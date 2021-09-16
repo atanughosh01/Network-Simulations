@@ -1,8 +1,6 @@
-
 # Performs binary sum betwwen 4 binary numbers with carry added back to the sum
 def binary_sum(x1, x2, x3, x4, k):
     bin_sum = bin(int(x1, 2) + int(x2, 2) + int(x3, 2) + int(x4, 2))[2:]
-
     while len(bin_sum) > k:
         c = len(bin_sum) - k
         carry = bin_sum[0:c]
@@ -25,15 +23,13 @@ def gen_CheckSum(data: str, k: int) -> str:
     bin_sum = binary_sum(b1, b2, b3, b4, k)
     s_cksum = ""
     for i in bin_sum:
-        if i == '1':
-            s_cksum += '0'
-        else:
-            s_cksum += '1'
+        if i == '1': s_cksum += '0'
+        else: s_cksum += '1'
     return s_cksum
 
 
 # Main() method to implement functionalities
-def main():
+if __name__ == "__main__":
     data = "10010101011000111001010011101100"
     packet_count = 4
     packet_length = int(len(data)/packet_count)
@@ -47,7 +43,3 @@ def main():
           "\nLength of CheckSum = " + str(len(sender_check_sum)) +
           "\nDataWord = " + str(data_word) +
           "\nLength of DataWord = " + str(len(data_word)) + "\n")
-
-
-if __name__ == "__main__":
-    main()

@@ -31,7 +31,7 @@ def start_sender():
 
         string_length = len(data)
         try: packet_length = int(input("\nEnter length of each packet (Should be greater than 16): "))    # ENTER 32
-        except Exception as ex:
+        except ValueError as ex:
             print("\n[EXCEPTION 3] Error Caught : " + str(ex) + "\nExiting System.... Exited")
             sys.exit(1)
 
@@ -127,9 +127,5 @@ def start_sender():
             print("Enter your choice once again")
 
 
-def main():
-    start_sender()
-
-
 if __name__ == "__main__":
-    main()
+    start_sender()

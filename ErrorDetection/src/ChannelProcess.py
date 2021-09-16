@@ -1,4 +1,3 @@
-
 # Injects error by flipping bits at specified number of indices of input string
 import random
 
@@ -16,12 +15,9 @@ def gen_rand_error(data: str, count: int) -> str:
     return ("".join(digit_list))
 
 
-def main():
+if __name__ == "__main__":
     string_to_modify = str(input("Enter the string to be modified : "))
     flip_count = int(input("Enter number of bits to be flipped : "))
     new_string = gen_rand_error(string_to_modify, flip_count)
     print("The modified String is : " + new_string)
-
-
-if __name__ == "__main__":
-    main()
+ 

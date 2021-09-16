@@ -3,7 +3,6 @@ import sys
 
 while True:
     inp = input("\nEnter filename to generate report : ")
-
     try:
         with open("textfiles/" + inp, "r") as text_file:
             line_no, count1, count2 = 0, 0, 0
@@ -20,5 +19,4 @@ while True:
         print("Percentage inaccuracy of detecting error of this scheme = " + str(inaccuracy) + " %\n")
     except Exception as ex:
         print("[EXCEPTION 1] " + str(ex))
-        print("Exiting system..... Exited.\n")
-        sys.exit(1)
+        continue
