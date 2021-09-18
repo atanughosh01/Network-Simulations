@@ -1,24 +1,20 @@
 import sys
-import time
 import const
-import socket
-import threading
-from gen_packet import *
+from gen_packet import Packet
 
 
 class Receiver:
 
-    # def __init__(self, name: int, channel_to_receiver: socket.socket):
     def __init__(self, name: int, channel_to_receiver):
-        self.name = name
-        self.packet_type = {'data': 0, 'ack': 1}
-        self.sender_list = {}
-        self.channel_to_receiver = channel_to_receiver
         self.seq_no = 0
+        self.name = name
+        self.sender_list = {}
+        self.packet_type = {'data': 0, 'ack': 1}
+        self.channel_to_receiver = channel_to_receiver
         self.recent_ack = Packet(1, 0, "Acknowledgement Packet", self.name, 0).make_pkt()
 
     def open_file(self, filepath: str):
-        try: fptr = open(filepath, 'a+')
+        try: fptr = open(filepath, 'a+', encoding='utf-8')
         except FileNotFoundError as file_err:
             print("\nEXCEPTION Caught : " + str(file_err))
             sys.exit("File {} Not Found!".format(filepath))
@@ -34,7 +30,6 @@ class Receiver:
             sender = self.decode_sender(pkt)
             
             if sender not in self.sender_list.keys():
-                #self.sender_list[sender] = const.outfile_path + 'output' + str(sender)
                 self.sender_list[sender] = const.outfile_path + 'output' + str(sender)
 
             outfile = self.sender_list[sender]

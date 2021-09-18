@@ -1,10 +1,9 @@
 import sys
 import time
 import const
-import socket
 import random
 import threading
-from gen_packet import *
+from gen_packet import Packet
 
 
 class Sender:
@@ -25,12 +24,13 @@ class Sender:
         self.collision_technique = collision_technique
         self.busy                = 0
         self.collision_count     = 0
+        self.recent_packet       = None
 
     def select_receiver(self):
         return self.name
 
     def open_file(self, file_name):
-        try: file = open(file_name, 'r')
+        try: file = open(file_name, 'r', encoding='utf-8')
         except IOError: sys.exit("No file exit with name {} !".format(file_name))
         return file
 
@@ -47,11 +47,11 @@ class Sender:
                     time.sleep(const.collision_wait_time)
                 else:
                     print("SENDER-{} -->> PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1))
-                    file = open('textfiles/collision.txt',"w")
+                    file = open('textfiles/collision.txt', "w", encoding='utf-8')
                     file.write(str(1))
                     file.close()
                     time.sleep(const.vulnerable_time)
-                    file = open('textfiles/collision.txt',"w")
+                    file = open('textfiles/collision.txt', "w",  encoding='utf-8')
                     file.write(str(0))
                     file.close()
                     self.sender_to_channel.send(packet) 
@@ -76,11 +76,11 @@ class Sender:
                     time.sleep(const.collision_wait_time)
                 else:
                     print("SENDER-{} -->> PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1))
-                    file = open('textfiles/collision.txt',"w")
+                    file = open('textfiles/collision.txt', "w",  encoding='utf-8')
                     file.write(str(1))
                     file.close()               
                     time.sleep(const.vulnerable_time)
-                    file = open('textfiles/collision.txt',"w")
+                    file = open('textfiles/collision.txt', "w",  encoding='utf-8')
                     file.write(str(0))
                     file.close()
                     self.sender_to_channel.send(packet)
@@ -108,11 +108,11 @@ class Sender:
                         time.sleep(const.collision_wait_time)
                     else:
                         print("SENDER-{} -->> PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1))
-                        file = open('textfiles/collision.txt',"w")
+                        file = open('textfiles/collision.txt', "w",  encoding='utf-8')
                         file.write(str(1))
                         file.close()                         
                         time.sleep(const.vulnerable_time)
-                        file = open('textfiles/collision.txt',"w")
+                        file = open('textfiles/collision.txt', "w",  encoding='utf-8')
                         file.write(str(0))
                         file.close()
                         self.sender_to_channel.send(packet) 
@@ -160,7 +160,7 @@ class Sender:
             if(self.channel_to_sender.recv() == '1'): self.busy = 1
             else: self.busy = 0
 
-    def transmit(self):
+    def initiate_sender_process(self):
         sending_thread = threading.Thread(name="sending_thread", target=self.data_into_frames)
         receiving_signal_thread = threading.Thread(name="receiving_signal_thread", target=self.sense_signal)
 

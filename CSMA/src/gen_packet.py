@@ -1,5 +1,4 @@
 '''module for creating data frames, extraction of data and decoding addresses'''
-# import checker
 import checker
 
 
@@ -7,27 +6,42 @@ class Packet:
 
     def __init__(self, _type, seq_no, segment_data, sender, dest) -> None:
         self.type = _type
+        self.seq_no = seq_no
         self.segment_data = segment_data
         self.sender = sender
         self.dest = dest
-        self.seq_no = seq_no
         self.packet = None
 
-    #  preamble + sfd + dest + source + seqNo + len + data + cksum
-    #     7     +  1  +  6   +   6    +  1    +  1  +  46  +   4  =  72
+    
+
+    #  preamble + sfd + dest + source + seq_no + len + data + cksum
+    #     7     +  1  +  6   +   6    +   1    +  1  +  46  +   4  =  72
+
+    ######################################################################
+
+    #  preamble + sfd + dest + source + seq_no + len + data + cksum
+    #   7       +  1  +  8   +   8    +    1   +  1  +  36  +   2  =  64
 
     def make_pkt(self):
-        preamble = '01'*28
-        sfd = '10101011'
+        '''
+        segment data need to be in string
+        byte = file.read(1)...segmentdata += str(byte)
+        everythong has to be in string
+        returns packet obj
+        '''
+        preamble = '01'*28      # 7 bytes of alternating 01
+        sfd = '10101011'        # start frame delimeter
         seq_to_bits = '{0:08b}'.format(int(self.seq_no))
         dest_address = '{0:048b}'.format(int(self.dest))
         length = '{0:008b}'.format(len(self.segment_data))
         src_address = '{0:048b}'.format(int(self.sender))
         data = ""
+        # print(len(self.segment_data))
         for i in range(len(self.segment_data)):
             character = self.segment_data[i]
             data_byte = '{0:08b}'.format(ord(character))
             data = data + data_byte
+        # print(len(src_address))
         packet = preamble + sfd + dest_address + src_address + seq_to_bits + length + data
         ck_sum = checker.check_sum(packet)
         packet = packet + ck_sum
