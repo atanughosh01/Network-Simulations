@@ -1,16 +1,17 @@
+''' main script to implement all the functionalities defined in the modules'''
+
 import const
-import socket
 import threading
 import multiprocessing
-from sender import *
-from channel import *
-from receiver import *
+from sender import Sender
+from channel import Channel
+from receiver import Receiver
 
 
-def start_simulation():
+def start_simulation(technique: int):
 
-    #writeFromSenderToChannel = []
-    #readFromSenderToChannel = []
+    # write_from_sender_to_channel = []
+    # read_from_sender_to_channel = []
 
     write_from_channel_to_sender = []
     read_from_channel_to_sender = []
@@ -18,26 +19,39 @@ def start_simulation():
     write_from_channel_to_receiver = []
     read_from_channel_to_receiver = []
 
-    write_from_receiver_to_channel = []
+    # write_from_receiver_to_channel = []
     read_from_receiver_to_channel = []
 
-    for i in range(const.total_sender_number):
 
+    ######################################################################################
+    # Pipe() returns a tuple (of two objects) whose 1st-one can read and 2nd-one can write
+    ######################################################################################
+    for _ in range(const.total_sender_number):
         read_head, write_head = multiprocessing.Pipe()
-        write_from_channel_to_sender.append(write_head)
-        read_from_channel_to_sender.append(read_head)
+        read_from_channel_to_sender.append(read_head)       # goes to sender
+        write_from_channel_to_sender.append(write_head)     # goes to channel
 
-    for i in range(const.total_receiver_number):
+    for _ in range(const.total_receiver_number):
         read_head, write_head = multiprocessing.Pipe()
-        write_from_channel_to_receiver.append(write_head)
-        read_from_channel_to_receiver.append(read_head)
+        read_from_channel_to_receiver.append(read_head)     # goes to receiver
+        write_from_channel_to_receiver.append(write_head)   # goes to channel
 
     read_from_sender_to_channel, write_from_sender_to_channel = multiprocessing.Pipe()
 
+
+    ##################################################################################
+    # making the sender list, receiver list, sender threadlist and receiver threadlist
+    ##################################################################################
     sender_list = []
     receiver_list = []
+    sender_threads = []
+    receiver_threads = []
 
-    technique = int(input("The CSMA technique you want to use\n1. One Persistent Method\n2. Non Persistent Method\n3. P-Persistent Method\nChoose one of the following - "))
+
+    ##############################################################
+    # creating the channel, sender and receiver classes' instances
+    ##############################################################
+    channel = Channel(read_from_sender_to_channel, write_from_channel_to_sender, read_from_receiver_to_channel, write_from_channel_to_receiver)
 
     for i in range(const.total_sender_number):
         sender = Sender(i, 'textfiles/input/input'+str(i)+'.txt', write_from_sender_to_channel, read_from_channel_to_sender[i], technique)
@@ -47,21 +61,25 @@ def start_simulation():
         receiver = Receiver(i, read_from_channel_to_receiver[i])
         receiver_list.append(receiver)
 
-    channel = Channel(read_from_sender_to_channel, write_from_channel_to_sender, read_from_receiver_to_channel, write_from_channel_to_receiver)
 
-    sender_threads = []
-    receiver_threads = []
-
-    for i in range(len(sender_list)):
-        p = threading.Thread(target=sender_list[i].transmit)
-        sender_threads.append(p)
-
-    for i in range(len(receiver_list)):
-        p = threading.Thread(target=receiver_list[i].initiate_receiver_process)
-        receiver_threads.append(p)
-
+    ########################################################################################
+    # making one channel thread, and multiple sender-receiver threads, and add them to lists
+    ########################################################################################
     channel_thread = threading.Thread(target=channel.initiate_channel_process)
 
+    for i in range(len(sender_list)):
+        s = threading.Thread(target=sender_list[i].initiate_sender_process)
+        sender_threads.append(s)
+
+    for i in range(len(receiver_list)):
+        r = threading.Thread(target=receiver_list[i].initiate_receiver_process)
+        receiver_threads.append(r)
+
+
+    #############################################################################################
+    # MULTIPROCESSING STARTS HERE
+    # initialise and end execution of single channel thread, and multiple sender-receiver threads
+    #############################################################################################
     channel_thread.start()
 
     for thread in receiver_threads:
@@ -79,7 +97,22 @@ def start_simulation():
         thread.join()
 
 
-if __name__ == "__main__":
-    start_simulation()
+    # print("**************************************************")
+    # print("**************************************************")
+    # print("**************************************************")
+    # print("******************  END  *************************")
+    # print("**************************************************")
+    # print("**************************************************")
+    # print("**************************************************")
 
-# python main.py
+
+if __name__ == "__main__":
+    while True:
+        print("------------------------------------------------------")
+        print("|    Choose the CSMA technique you want to use -     |")
+        print("|        1. One Persistent Method                    |")
+        print("|        2. Non Persistent Method                    |")
+        print("|        3. P-Persistent Methodt                     |")
+        print("------------------------------------------------------")
+        choice = int(input(" \nEnter your choice (1, 2 or 3): "))
+        start_simulation(choice)
