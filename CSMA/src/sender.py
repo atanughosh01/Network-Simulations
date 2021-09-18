@@ -1,80 +1,171 @@
 import sys
+import time
+import const
 import socket
+import random
+import threading
+from gen_packet import *
 
 
-def create_frame(data):
-    count_ones = 0
-    for ch in data:
-        if ch == '1':
-            count_ones += 1
-    data += str(count_ones % 2)
-    return data
+class Sender:
 
+    #def __init__(self, name:int, file_name:str, sender_to_channel:socket.socket, channel_to_sender, collision_technique:int):
+    def __init__(self, name:int, file_name:str, sender_to_channel, channel_to_sender, collision_technique:int):
+        self.name                = name
+        self.file_name           = file_name
+        self.packet_type         = {'data' : 0, 'ack' : 1}
+        self.dest                = self.select_receiver()
+        self.sender_to_channel   = sender_to_channel
+        self.channel_to_sender   = channel_to_sender
+        self.timeout_event       = threading.Event()
+        self.end_transmitting    = False
+        self.start               = 0
+        self.seq_no              = 0
+        self.pkt_count           = 0
+        self.collision_technique = collision_technique
+        self.busy                = 0
+        self.collision_count     = 0
 
-def extract_message(frame):
-    endidx = -1
-    for i in range(len(frame)-1):
-        if frame[i] == '/' and endidx == -1:
-            endidx = i
-            break
-    return frame[:endidx]
+    def select_receiver(self):
+        return self.name
 
+    def open_file(self, file_name):
+        try: file = open(file_name, 'r')
+        except IOError: sys.exit("No file exit with name {} !".format(file_name))
+        return file
 
-def extract_count(frame):
-    startidx = -1
-    endidx = -1
-    for i in range(len(frame)-1):
-        if frame[i] == '/':
-            if startidx == -1:
-                startidx = i+1
+    def send_data_with_one_persistent(self, packet):
+        while True:
+            if self.busy == 0:
+                file = self.open_file("textfiles/collision.txt")
+                collision = file.read()
+                file.close()
+
+                if collision == '1':
+                    self.collision_count += 1
+                    print("SENDER-{} -->> COLLISION".format(self.name+1))
+                    time.sleep(const.collision_wait_time)
+                else:
+                    print("SENDER-{} -->> PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1))
+                    file = open('textfiles/collision.txt',"w")
+                    file.write(str(1))
+                    file.close()
+                    time.sleep(const.vulnerable_time)
+                    file = open('textfiles/collision.txt',"w")
+                    file.write(str(0))
+                    file.close()
+                    self.sender_to_channel.send(packet) 
+                    time.sleep(const.propagation_time)
+                    break
+
             else:
-                endidx = i
-    cnt = frame[startidx:endidx]
-    return int(cnt)
+                print("SENDER-{} -->> FOUND CHANNEL BUSY".format(self.name+1))
+                time.sleep(0.5)
+                continue
 
+    def send_data_with_non_persistent(self, packet):
+        while True:
+            if self.busy == 0:
+                file = self.open_file("textfiles/collision.txt")
+                collision = file.read()
+                file.close()
 
-def extract_status(frame):
-    count = 0
-    startidx = -1
-    for i in range(len(frame)-1):
-        if frame[i] == '/':
-            count += 1
-        if count == 2 and startidx == -1:
-            startidx = i+1
-            break
-    return frame[startidx:]
+                if collision == '1':
+                    self.collision_count += 1
+                    print("SENDER-{} -->> COLLISION".format(self.name+1))
+                    time.sleep(const.collision_wait_time)
+                else:
+                    print("SENDER-{} -->> PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1))
+                    file = open('textfiles/collision.txt',"w")
+                    file.write(str(1))
+                    file.close()               
+                    time.sleep(const.vulnerable_time)
+                    file = open('textfiles/collision.txt',"w")
+                    file.write(str(0))
+                    file.close()
+                    self.sender_to_channel.send(packet)
+                    time.sleep(const.propagation_time)
+                    break
 
+            else:
+                print("SENDER-{} -->> FOUND CHANNEL BUSY".format(self.name+1))
+                time.sleep(const.non_persistant_waiting_time)
+                continue
 
-def Main(senderno):
-    count = 0
-    sent_frames = []
-    print('Initiating Sender #', senderno)
-    host = '127.0.0.1'
-    port = 8080
-    sender_side_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sender_side_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sender_side_socket.connect((host, port))
+    def send_data_with_p_persistent(self, packet):
+        while True:
+            if self.busy == 0:
+                prob = random.random()
 
-    while True:
-        print()
-        data = input("Enter $ ")
-        data = create_frame(data) + '/' + str(count) + '/'
-        msg = extract_message(data)
-        print('Sending to channel :', str(msg))
-        sender_side_socket.send(data.encode())
-        sent_frames.append(data)
-        count += 1
-        if not msg:
-            break
-        if msg == 'q0':
-            break
+                if(prob <= 0.5):
+                    file = self.open_file("textfiles/collision.txt")
+                    collision = file.read()
+                    file.close()
 
-    sender_side_socket.close()
+                    if collision == '1':
+                        self.collision_count += 1
+                        print("SENDER-{} -->> COLLISION OCCURED".format(self.name+1))
+                        time.sleep(const.collision_wait_time)
+                    else:
+                        print("SENDER-{} -->> PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1))
+                        file = open('textfiles/collision.txt',"w")
+                        file.write(str(1))
+                        file.close()                         
+                        time.sleep(const.vulnerable_time)
+                        file = open('textfiles/collision.txt',"w")
+                        file.write(str(0))
+                        file.close()
+                        self.sender_to_channel.send(packet) 
+                        time.sleep(const.propagation_time)
+                        break
 
+                else:
+                    print("SENDER-{} -->> WAITING".format(self.name+1))
+                    time.sleep(const.time_slot)
 
-if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        senderno = int(sys.argv[1])
-    else:
-        senderno = 1
-    Main(senderno)
+            else:
+                print("SENDER-{} -->> FOUND CHANNEL BUSY".format(self.name+1))
+                time.sleep(0.5)
+                continue
+
+    def data_into_frames(self):
+        print("SENDER-{} starts sending data to RECEIVER{}".format(self.name+1, self.dest+1))
+        self.start = time.time()
+        file = self.open_file(self.file_name)
+        byte = file.read(const.default_datapacket_size)
+        self.seq_no = 0
+        while byte:
+            packet = Packet(self.packet_type['data'], self.seq_no, byte, self.name, self.dest).make_pkt()
+            self.recent_packet = packet
+            if(self.collision_technique == 1): self.send_data_with_one_persistent(packet)
+            elif(self.collision_technique == 2): self.send_data_with_non_persistent(packet)
+            else: self.send_data_with_p_persistent(packet)
+            self.pkt_count += 1
+            byte = file.read(const.default_datapacket_size)
+            if len(byte) == 0: break
+            elif len(byte) < const.default_datapacket_size:
+                temp_length = len(byte)
+                for _ in range(const.default_datapacket_size - temp_length): byte += '\0'
+        
+        self.end_transmitting = True
+        file.close()
+        print("\n*****************SENDER-{} -->> STATS******************".format(self.name+1))
+        print("Total packets: {}".format(self.pkt_count))
+        print("Total Delay:", round(time.time() - self.start, 2), "secs")
+        print("Total collisions: {}".format(self.collision_count))
+        print("Throughput: {}\n".format(round(self.pkt_count/(self.pkt_count + self.collision_count), 3)))
+
+    def sense_signal(self):
+        while True:
+            if(self.channel_to_sender.recv() == '1'): self.busy = 1
+            else: self.busy = 0
+
+    def transmit(self):
+        sending_thread = threading.Thread(name="sending_thread", target=self.data_into_frames)
+        receiving_signal_thread = threading.Thread(name="receiving_signal_thread", target=self.sense_signal)
+
+        sending_thread.start()
+        receiving_signal_thread.start()
+
+        sending_thread.join()
+        receiving_signal_thread.join()
