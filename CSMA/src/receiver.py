@@ -1,88 +1,45 @@
 import sys
 import time
+import const
 import socket
-import random
+import threading
+from gen_packet import *
 
 
-def wait_random_time():
-    x = random.randint(0, 5)
-    if x <= 1:
-        time.sleep(2)
+class Receiver:
 
+    # def __init__(self, name: int, channel_to_receiver: socket.socket):
+    def __init__(self, name: int, channel_to_receiver):
+        self.name = name
+        self.packet_type = {'data': 0, 'ack': 1}
+        self.sender_list = {}
+        self.channel_to_receiver = channel_to_receiver
+        self.seq_no = 0
+        self.recent_ack = Packet(1, 0, "Acknowledgement Packet", self.name, 0).make_pkt()
 
-def check_error(frame):
-    count_ones = 0
-    for ch in frame:
-        if ch == '1':
-            count_ones += 1
-    return count_ones % 2
+    def open_file(self, filepath: str):
+        try: fptr = open(filepath, 'a+')
+        except FileNotFoundError as file_err:
+            print("\nEXCEPTION Caught : " + str(file_err))
+            sys.exit("File {} Not Found!".format(filepath))
+        return fptr
 
+    def decode_sender(self, pkt):
+        sender_address = pkt.decode_src_address()
+        return sender_address
 
-def extract_message(frame):
-    endidx = -1
-    for i in range(len(frame)-1):
-        if frame[i] == '/' and endidx == -1:
-            endidx = i
-            break
-    return frame[:endidx]
+    def initiate_receiver_process(self):
+        while True:
+            pkt = self.channel_to_receiver.recv()
+            sender = self.decode_sender(pkt)
+            
+            if sender not in self.sender_list.keys():
+                #self.sender_list[sender] = const.outfile_path + 'output' + str(sender)
+                self.sender_list[sender] = const.outfile_path + 'output' + str(sender)
 
-
-def extract_count(frame):
-    startidx = -1
-    endidx = -1
-    for i in range(len(frame)-1):
-        if frame[i] == '/':
-            if startidx == -1:
-                startidx = i+1
-            else:
-                endidx = i
-    cnt = frame[startidx:endidx]
-    return int(cnt)
-
-
-def extract_status(frame):
-    count = 0
-    startidx = -1
-    for i in range(len(frame)-1):
-        if frame[i] == '/':
-            count += 1
-        if count == 2 and startidx == -1:
-            startidx = i+1
-            break
-    return frame[startidx:]
-
-
-def Main(senderno):
-    print('Initiating Receiver #', senderno)
-    host = '127.0.0.2'
-    port = 9090
-    receiver_side_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    receiver_side_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    receiver_side_socket.connect((host, port))
-
-    while True:
-        print()
-        data = receiver_side_socket.recv(1024).decode('utf-8')
-        msg = extract_message(data)
-        if not msg:
-            break
-        if msg == 'q0':
-            break
-        print('Received from channel :', str(data))
-        wait_random_time()
-        if check_error(msg) == 0:
-            rdata = 'ACK'
-        else:
-            rdata = 'NAK'
-        print('Sending to channel :', str(rdata))
-        receiver_side_socket.send(rdata.encode())
-
-    receiver_side_socket.close()
-
-
-if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        senderno = int(sys.argv[1])
-    else:
-        senderno = 1
-    Main(senderno)
+            outfile = self.sender_list[sender]
+            file = self.open_file(outfile)
+            data = pkt.extract_data()
+            file.write(data)
+            file.close()
+            print("RECEIVER-{} -->> PACKET RECEIVED".format(self.name+1))
