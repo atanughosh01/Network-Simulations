@@ -10,10 +10,10 @@ class Channel():
     '''Channel Class to implement packet channelizing functionalities'''
 
     def __init__(self, sender_to_channel, channel_to_sender: list, receiver_to_channel: list, channel_to_receiver: list):
-        self.is_active = False
-        self.now = datetime.now()
-        self.sender_to_channel = sender_to_channel
-        self.channel_to_sender = channel_to_sender
+        self.is_active           = False
+        self.now                 = datetime.now()
+        self.sender_to_channel   = sender_to_channel
+        self.channel_to_sender   = channel_to_sender
         self.receiver_to_channel = receiver_to_channel
         self.channel_to_receiver = channel_to_receiver
 
@@ -41,8 +41,11 @@ class Channel():
     ##########################################
     def initiate_channel_process(self):
         '''Initialises Channel and maintains flow of sender and receiver threads'''
+        self.now = datetime.now()
         curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
         print("\n" + curr_datetime + " CHANNEL has been initialised\n")
+        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+            rep_file.write("\n" + curr_datetime + " CHANNEL has been initialised\n" + '\n')
         channel_to_receiver_thrdlst = []
         channel_to_sender_thrdlst = []
         sender = 0
