@@ -3,7 +3,6 @@
 import random
 
 
-# window_size = 3
 total_sender_number = 2
 total_receiver_number = 2
 default_datapacket_size = 36
