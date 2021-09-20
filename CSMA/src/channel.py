@@ -1,18 +1,24 @@
+'''Channel Module for packet channelization'''
+
 import time
 import const
 import threading
+from datetime import datetime
 
 
 class Channel():
+    '''Channel Class to implement packet channelizing functionalities'''
 
     def __init__(self, sender_to_channel, channel_to_sender: list, receiver_to_channel: list, channel_to_receiver: list):
         self.is_active = False
+        self.now = datetime.now()
         self.sender_to_channel = sender_to_channel
         self.channel_to_sender = channel_to_sender
         self.receiver_to_channel = receiver_to_channel
         self.channel_to_receiver = channel_to_receiver
 
     def transfer_pkt_from_sender_to_receiver(self):
+        '''Involved in channelization of packets from Sender to Receiver'''
         while True:
             pkt = self.sender_to_channel.recv()
             self.is_active = True
@@ -22,12 +28,19 @@ class Channel():
             self.channel_to_receiver[receiver].send(pkt)
 
     def tarnsfer_response_from_receiver_to_sender(self, sender: int):
+        '''Involved in channelization of responses (ack) from Receiver to Sender'''
         while True:
             if self.is_active: self.channel_to_sender[sender].send(str(1))  # channel is busy
             else: self.channel_to_sender[sender].send(str(0))  # channel is idle
 
+
+    ##########################################
+    # This function operates on Channel-Object
+    ##########################################
     def initiate_channel_process(self):
-        print("\nCHANNEL has been initialised\n")
+        '''Initialises Channel and maintains flow of sender and receiver threads'''
+        curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
+        print("\n" + curr_datetime + " CHANNEL has been initialised\n")
         channel_to_receiver_thrdlst = []
         channel_to_sender_thrdlst = []
         sender = 0
@@ -36,8 +49,7 @@ class Channel():
         channel_to_receiver_thrdlst.append(pkt_thrd)
 
         for _ in range(const.total_sender_number):
-            resp_thrd = threading.Thread(name="ResponseThread-"+str(sender+1),
-                                         target=self.tarnsfer_response_from_receiver_to_sender, args=(sender,))
+            resp_thrd = threading.Thread(name="ResponseThread-"+str(sender+1), target=self.tarnsfer_response_from_receiver_to_sender, args=(sender,))
             channel_to_sender_thrdlst.append(resp_thrd)
             sender += 1
 
