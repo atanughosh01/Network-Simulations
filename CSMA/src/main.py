@@ -120,7 +120,11 @@ if __name__ == "__main__":
         elif choice == 3: ch = "P Persistent Method"
         else: ch = "No Method Chosen!"
         print("Chosen CSMA technique is : {}".format(ch))
+        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+            rep_file.write('\n-----------------------------------------------------------------------------\n' \
+                + "\t###### CHOSEN CSMA TECHNIQUE IS : {} ######".format(ch.upper()) + '\n')
         start_simulation(choice)
+
 
         # print("**************************************************")
         # print("**************************************************")
