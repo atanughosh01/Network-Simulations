@@ -9,6 +9,7 @@ from receiver import Receiver
 
 
 def start_simulation(technique: int):
+    '''Simulate the whole CSMA implementation'''
 
     # write_from_sender_to_channel = []
     # read_from_sender_to_channel = []
