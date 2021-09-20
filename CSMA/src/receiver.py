@@ -10,18 +10,19 @@ class Receiver:
     '''Receiver Class to implement packet receiving functionalities'''
 
     def __init__(self, name: int, channel_to_receiver):
-        self.seq_no = 0             # need to be synced with sender
-        self.name = name
-        self.sender_list = {}
-        self.now = datetime.now()
-        self.packet_type = {'data': 0, 'ack': 1}
+        self.seq_no              = 0             # need to be synced with sender
+        self.name                = name
+        self.sender_list         = {}
+        self.now                 = datetime.now()
+        self.packet_type         = {'data': 0, 'ack': 1}
         self.channel_to_receiver = channel_to_receiver
-        self.recent_ack = Packet(1, 0, "Acknowledgement Packet", self.name, 0).make_pkt()
+        self.recent_ack          = Packet(1, 0, "Acknowledgement Packet", self.name, 0).make_pkt()
 
 
     def open_file(self, filepath: str):
         '''Opens file in append mode and returns file-pointer-object'''
         try:
+            self.now = datetime.now()
             curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
             fptr = open(filepath, 'a+', encoding='utf-8')
         except FileNotFoundError as file_err:
@@ -53,5 +54,8 @@ class Receiver:
             data = pkt.extract_data()
             file.write(data)
             file.close()
+            self.now = datetime.now()
             curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
             print("\n" + curr_datetime + " RECEIVER-{}  ||  PACKET RECEIVED\n".format(self.name+1))
+            with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                rep_file.write("\n" + curr_datetime + " RECEIVER-{}  ||  PACKET RECEIVED\n".format(self.name+1) + '\n')
