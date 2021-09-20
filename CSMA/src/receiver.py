@@ -3,6 +3,7 @@
 import sys
 import const
 from gen_packet import Packet
+from datetime import datetime
 
 
 class Receiver:
@@ -12,23 +13,32 @@ class Receiver:
         self.seq_no = 0             # need to be synced with sender
         self.name = name
         self.sender_list = {}
+        self.now = datetime.now()
         self.packet_type = {'data': 0, 'ack': 1}
         self.channel_to_receiver = channel_to_receiver
         self.recent_ack = Packet(1, 0, "Acknowledgement Packet", self.name, 0).make_pkt()
 
+
     def open_file(self, filepath: str):
         '''Opens file in append mode and returns file-pointer-object'''
-        try: fptr = open(filepath, 'a+', encoding='utf-8')
+        try:
+            curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
+            fptr = open(filepath, 'a+', encoding='utf-8')
         except FileNotFoundError as file_err:
-            print("\nEXCEPTION Caught : " + str(file_err))
+            print("\n" + curr_datetime + " EXCEPTION Caught : " + str(file_err))
             sys.exit("File {} Not Found!".format(filepath))
         return fptr
+
 
     def decode_sender(self, pkt):
         '''Decodes source-address from the received packets'''
         sender_address = pkt.decode_src_address()
         return sender_address
 
+
+    #####################################################################
+    # This function operates on each Receiver-Object (from Receiver-List)
+    #####################################################################
     def initiate_receiver_process(self):
         '''Receives & decodes packets from sender, extracts data and writes it to output file'''
         while True:
@@ -43,4 +53,5 @@ class Receiver:
             data = pkt.extract_data()
             file.write(data)
             file.close()
-            print("RECEIVER-{} -->> PACKET RECEIVED".format(self.name+1))
+            curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
+            print("\n" + curr_datetime + " RECEIVER-{}  ||  PACKET RECEIVED\n".format(self.name+1))

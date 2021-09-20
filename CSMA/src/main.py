@@ -115,4 +115,17 @@ if __name__ == "__main__":
         print("|        3. P-Persistent Methodt                     |")
         print("------------------------------------------------------")
         choice = int(input(" \nEnter your choice (1, 2 or 3): "))
+        if choice == 1: ch = "One Persistent Method"
+        elif choice == 2: ch = "Non Persistent Method"
+        elif choice == 3: ch = "P Persistent Method"
+        else: ch = "No Method Chosen!"
+        print("Chosen CSMA technique is : {}".format(ch))
         start_simulation(choice)
+
+        # print("**************************************************")
+        # print("**************************************************")
+        # print("**************************************************")
+        # print("******************  END  *************************")
+        # print("**************************************************")
+        # print("**************************************************")
+        # print("**************************************************")
