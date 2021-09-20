@@ -17,6 +17,7 @@ class Channel():
         self.receiver_to_channel = receiver_to_channel
         self.channel_to_receiver = channel_to_receiver
 
+
     def transfer_pkt_from_sender_to_receiver(self):
         '''Involved in channelization of packets from Sender to Receiver'''
         while True:
@@ -26,6 +27,7 @@ class Channel():
             self.is_active = False
             receiver = pkt.decode_dest_address()
             self.channel_to_receiver[receiver].send(pkt)
+
 
     def tarnsfer_response_from_receiver_to_sender(self, sender: int):
         '''Involved in channelization of responses (ack) from Receiver to Sender'''

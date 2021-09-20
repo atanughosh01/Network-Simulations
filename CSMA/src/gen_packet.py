@@ -47,8 +47,10 @@ class Packet:
         self.packet = packet
         return self
 
+
     def __str__(self) -> str:
         return str(self.packet)
+
 
     def extract_data(self) -> str:
         '''Extracts the original raw data from the generated packets'''
@@ -60,9 +62,11 @@ class Packet:
             text += chr(int(letter, 2))
         return text
 
+
     def decode_length(self) -> int:
         '''Decodes length of segment data'''
         return len(self.segment_data)
+
 
     def decode_dest_address(self) -> int:
         '''Decodes Destination Address from the generated packet'''
@@ -70,19 +74,23 @@ class Packet:
         dest_address = int(dest, 2)
         return dest_address
 
+
     def decode_src_address(self) -> int:
         '''Decodes Source Address from the generated packet'''
         src = self.packet[128:192]
         src_address = int(src, 2)
         return src_address
 
+
     def check_for_error(self) -> bool:
         '''Checks for error in the packets (based on CheckSum Error Detection technique)'''
         return checker.check_error(self.packet)
 
+
     def check_type(self):
         '''Checks type of generated packet'''
         return self.type
+
 
     def decode_seq_no(self) -> int:
         '''Decodes sequence number from the generated packet'''

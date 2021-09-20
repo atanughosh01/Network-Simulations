@@ -30,9 +30,11 @@ class Sender:
         self.timeout_event       = threading.Event()
         self.now                 = datetime.now()
 
+
     def select_receiver(self):
         '''Selects which receiver to send packet to'''
         return self.name
+
 
     def open_file(self, file_name):
         '''Opens file in append mode and returns file-pointer-object'''
@@ -43,6 +45,7 @@ class Sender:
             print(curr_datetime + " EXCEPTION CAUGHT : " + str(fnfe))
             sys.exit("File with name {} is not found!".format(file_name))
         return file
+
 
     def send_data_with_one_persistent(self, packet):
         '''Sends packet with One-persistent CSMA technique'''
@@ -77,6 +80,7 @@ class Sender:
                 time.sleep(0.5)
                 continue
 
+
     def send_data_with_non_persistent(self, packet):
         '''Sends packet with Non-persistent CSMA technique'''
         while True:
@@ -109,6 +113,7 @@ class Sender:
                 print(curr_datetime + " SENDER-{}    ||  FOUND CHANNEL BUSY".format(self.name+1))
                 time.sleep(const.non_persistant_waiting_time)
                 continue
+
 
     def send_data_with_p_persistent(self, packet):
         '''Sends packet with P-persistent CSMA technique'''
@@ -186,6 +191,7 @@ class Sender:
         print("*\tTotal collisions: {}".format(self.collision_count))
         print("*\tThroughput: {}".format(round(self.pkt_count/(self.pkt_count + self.collision_count), 3)))
         print("********************************************************\n\n")
+
 
     def sense_signal(self):
         '''Senses the channel and decides wheather it is currently BUSY or FREE'''
