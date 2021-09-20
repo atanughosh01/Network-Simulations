@@ -4,36 +4,35 @@ import checker
 
 
 class Packet:
-    '''Packet Class to create packets from input data and decode each invidual component of the generated packet'''
+    '''Packet Class to create packets from input data and decode each
+    invidual component of the generated packet'''
 
     def __init__(self, _type, seq_no, segment_data, sender, dest) -> None:
-        self.type = _type
-        self.seq_no = seq_no
+        self.type         = _type
+        self.seq_no       = seq_no
         self.segment_data = segment_data
-        self.sender = sender
-        self.dest = dest
-        self.packet = None
+        self.sender       = sender
+        self.dest         = dest
+        self.packet       = None
 
 
     ########################  PACKET STRUCTURE  ########################
     #  preamble + sfd + dest + source + seq_no + len + data + cksum
-    #     7     +  1  +  8   +   8    +    1   +  1  +  36  +   2  =  64
+    #     7     +  1  +  6   +   6    +    1   +  1  +  46  +   4  =  72
     ####################################################################
 
 
     def make_pkt(self):
         '''
-        segment data need to be in string
-        byte = file.read(1)...segmentdata += str(byte)
-        everythong has to be in string
-        returns packet obj
+        creates packet and returns packet obj
         '''
-        preamble = '01'*28      # 7 bytes of alternating 01
-        sfd = '10101011'        # start frame delimeter
-        seq_to_bits = '{0:08b}'.format(int(self.seq_no))
-        dest_address = '{0:064b}'.format(int(self.dest))
-        length_to_bits = '{0:008b}'.format(len(self.segment_data))
-        src_address = '{0:064b}'.format(int(self.sender))
+        # byte = file.read(1), segment_data += str(byte)
+        preamble = '01'*28                                          # (7 bytes)
+        sfd = '10101011'                                            # (1 byte)
+        dest_address = '{0:048b}'.format(int(self.dest))            # (6 bytes)
+        src_address = '{0:048b}'.format(int(self.sender))           # (6 bytes)
+        seq_to_bits = '{0:08b}'.format(int(self.seq_no))            # (1 byte)
+        length_to_bits = '{0:008b}'.format(len(self.segment_data))  # (1 byte)
         data = ""
         # print(len(self.segment_data))
         for i in range(len(self.segment_data)):
@@ -55,8 +54,7 @@ class Packet:
     def extract_data(self) -> str:
         '''Extracts the original raw data from the generated packets'''
         text = ""
-        length = len(self.segment_data)
-        data = self.packet[208:(208+(8*length))]
+        data = self.packet[176:544]
         ascii_data = [data[i:i+8] for i in range(0, len(data), 8)]
         for letter in ascii_data:
             text += chr(int(letter, 2))
@@ -70,14 +68,14 @@ class Packet:
 
     def decode_dest_address(self) -> int:
         '''Decodes Destination Address from the generated packet'''
-        dest = self.packet[64:128]
+        dest = self.packet[64:112]
         dest_address = int(dest, 2)
         return dest_address
 
 
     def decode_src_address(self) -> int:
         '''Decodes Source Address from the generated packet'''
-        src = self.packet[128:192]
+        src = self.packet[112:160]
         src_address = int(src, 2)
         return src_address
 
@@ -94,5 +92,5 @@ class Packet:
 
     def decode_seq_no(self) -> int:
         '''Decodes sequence number from the generated packet'''
-        seq_no = self.packet[192:200]
+        seq_no = self.packet[160:168]
         return int(seq_no, 2)
