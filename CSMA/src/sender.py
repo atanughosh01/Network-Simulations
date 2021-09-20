@@ -39,6 +39,7 @@ class Sender:
     def open_file(self, file_name):
         '''Opens file in append mode and returns file-pointer-object'''
         try:
+            self.now = datetime.now()
             curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
             file = open(file_name, 'r', encoding='utf-8')
         except FileNotFoundError as fnfe:
@@ -57,12 +58,18 @@ class Sender:
 
                 if collision == '1':
                     self.collision_count += 1
+                    self.now = datetime.now()
                     curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                     print(curr_datetime + " SENDER-{}    ||  COLLISION".format(self.name+1))
+                    with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                        rep_file.write(curr_datetime + " SENDER-{}    ||  COLLISION".format(self.name+1) + '\n')
                     time.sleep(const.collision_wait_time)
                 else:
+                    self.now = datetime.now()
                     curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                     print(curr_datetime + " SENDER-{}    ||  PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1))
+                    with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                        rep_file.write(curr_datetime + " SENDER-{}    ||  PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1) + '\n')
                     file = open('textfiles/collision.txt', "w", encoding='utf-8')
                     file.write(str(1))
                     file.close()
@@ -75,8 +82,11 @@ class Sender:
                     break
 
             else:
+                self.now = datetime.now()
                 curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                 print(curr_datetime + " SENDER-{}    ||  FOUND CHANNEL BUSY".format(self.name+1))
+                with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                    rep_file.write(curr_datetime + " SENDER-{}    ||  FOUND CHANNEL BUSY".format(self.name+1) + '\n')
                 time.sleep(0.5)
                 continue
 
@@ -91,12 +101,18 @@ class Sender:
 
                 if collision == '1':
                     self.collision_count += 1
+                    self.now = datetime.now()
                     curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                     print(curr_datetime + " SENDER-{}    ||  COLLISION".format(self.name+1))
+                    with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                        rep_file.write(curr_datetime + " SENDER-{}    ||  COLLISION".format(self.name+1) + '\n')
                     time.sleep(const.collision_wait_time)
                 else:
+                    self.now = datetime.now()
                     curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                     print(curr_datetime + " SENDER-{}    ||  PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1))
+                    with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                        rep_file.write(curr_datetime + " SENDER-{}    ||  PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1) + '\n')
                     file = open('textfiles/collision.txt', "w",  encoding='utf-8')
                     file.write(str(1))
                     file.close()
@@ -109,8 +125,11 @@ class Sender:
                     break
 
             else:
+                self.now = datetime.now()
                 curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                 print(curr_datetime + " SENDER-{}    ||  FOUND CHANNEL BUSY".format(self.name+1))
+                with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                    rep_file.write(curr_datetime + " SENDER-{}    ||  FOUND CHANNEL BUSY".format(self.name+1) + '\n')
                 time.sleep(const.non_persistant_waiting_time)
                 continue
 
@@ -121,19 +140,25 @@ class Sender:
             if self.busy == False:
                 prob = random.random()
 
-                if(prob <= 0.5):
+                if prob <= 0.5:
                     file = self.open_file("textfiles/collision.txt")
                     collision = file.read()
                     file.close()
 
                     if collision == '1':
                         self.collision_count += 1
+                        self.now = datetime.now()
                         curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                         print(curr_datetime + " SENDER-{}    ||  COLLISION OCCURED".format(self.name+1))
+                        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                            rep_file.write(curr_datetime + " SENDER-{}    ||  COLLISION OCCURED".format(self.name+1) + '\n')
                         time.sleep(const.collision_wait_time)
                     else:
+                        self.now = datetime.now()
                         curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                         print(curr_datetime + " SENDER-{}    ||  PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1))
+                        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                            rep_file.write(curr_datetime + " SENDER-{}    ||  PACKET {} SENT TO CHANNEL".format(self.name+1, self.pkt_count+1) + '\n')
                         file = open('textfiles/collision.txt', "w",  encoding='utf-8')
                         file.write(str(1))
                         file.close()
@@ -146,13 +171,19 @@ class Sender:
                         break
 
                 else:
+                    self.now = datetime.now()
                     curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                     print(curr_datetime + " SENDER-{}    ||  WAITING".format(self.name+1))
+                    with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                        rep_file.write(curr_datetime + " SENDER-{}    ||  WAITING".format(self.name+1) + '\n')
                     time.sleep(const.time_slot)
 
             else:
+                self.now = datetime.now()
                 curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
                 print(curr_datetime + " SENDER-{}    ||  FOUND CHANNEL BUSY".format(self.name+1))
+                with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                    rep_file.write(curr_datetime + " SENDER-{}    ||  FOUND CHANNEL BUSY".format(self.name+1) + '\n')
                 time.sleep(0.5)
                 continue
 
@@ -161,8 +192,9 @@ class Sender:
     # This function is responsible for maintaining sender to channel packet flow
     ############################################################################
     def data_into_frames(self):
-        '''Reads data from input file, generates packet, sends to channel based on the CSMA technique chosen,
-        also generates report (Delay, Collisions, Throughput) for each Sender'''
+        '''Reads data from input file, generates packet, sends to channel based on the CSMA 
+        technique chosen, also generates report (Delay, Collisions, Throughput) for each Sender'''
+        self.now = datetime.now()
         curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
         print(curr_datetime + " SENDER-{} starts sending data to RECEIVER{}".format(self.name+1, self.dest+1))
         self.start = time.time()
@@ -184,6 +216,7 @@ class Sender:
 
         self.end_transmitting = True
         file.close()
+        self.now = datetime.now()
         curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
         print("\n\n********** {} SENDER-{} STATS **********".format(curr_datetime, self.name+1))
         print("*\tTotal packets: {}".format(self.pkt_count))
@@ -191,6 +224,13 @@ class Sender:
         print("*\tTotal collisions: {}".format(self.collision_count))
         print("*\tThroughput: {}".format(round(self.pkt_count/(self.pkt_count + self.collision_count), 3)))
         print("********************************************************\n\n")
+        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+            rep_file.write("\n\n********** {} SENDER-{} STATS **********".format(curr_datetime, self.name+1) + '\n' + \
+                            "*\tTotal packets: {}".format(self.pkt_count) + '\n' + \
+                            "*\tTotal Delay: {} secs".format(round(time.time() - self.start, 2)) + '\n' + \
+                            "*\tTotal collisions: {}".format(self.collision_count) + '\n' + \
+                            "*\tThroughput: {}".format(round(self.pkt_count/(self.pkt_count + self.collision_count), 3)) + '\n' + \
+                            "********************************************************\n\n" + '\n')
 
 
     def sense_signal(self):
