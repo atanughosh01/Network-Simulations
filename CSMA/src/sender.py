@@ -240,6 +240,7 @@ class Sender:
                             "*\tThroughput: {}".format(round(self.pkt_count/(self.pkt_count + self.collision_count), 3)) + '\n' + \
                             "********************************************************\n\n" + '\n')
 
+
     def sense_signal(self):
         '''Senses the channel and decides wheather it is currently BUSY or FREE'''
         while True:
