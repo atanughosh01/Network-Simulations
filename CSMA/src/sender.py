@@ -138,7 +138,8 @@ class Sender:
         '''Sends packet with P-persistent CSMA technique'''
         while True:
             if self.busy == False:
-                prob = random.random()
+                # prob = random.random()
+                prob = 1/(const.total_sender_number)
 
                 if prob <= 0.5:
                     file = self.open_file("textfiles/collision.txt")
@@ -232,6 +233,13 @@ class Sender:
                             "*\tThroughput: {}".format(round(self.pkt_count/(self.pkt_count + self.collision_count), 3)) + '\n' + \
                             "********************************************************\n\n" + '\n')
 
+        with open('textfiles/analysis.txt', 'a+', encoding='utf-8') as rep_file:
+            rep_file.write("\n\n********** {} SENDER-{} STATS **********".format(curr_datetime, self.name+1) + '\n' + \
+                            "*\tTotal packets: {}".format(self.pkt_count) + '\n' + \
+                            "*\tTotal Delay: {} secs".format(round(time.time() - self.start, 2)) + '\n' + \
+                            "*\tTotal collisions: {}".format(self.collision_count) + '\n' + \
+                            "*\tThroughput: {}".format(round(self.pkt_count/(self.pkt_count + self.collision_count), 3)) + '\n' + \
+                            "********************************************************\n\n" + '\n')
 
     def sense_signal(self):
         '''Senses the channel and decides wheather it is currently BUSY or FREE'''
