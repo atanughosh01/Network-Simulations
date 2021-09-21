@@ -1,0 +1,80 @@
+
+
+********** 21/09/2021 05:22:25 SENDER-6 STATS **********
+*	Total packets: 13
+*	Total Delay: 62.96 secs
+*	Total collisions: 6
+*	Throughput: 0.684
+********************************************************
+
+
+
+
+********** 21/09/2021 05:22:30 SENDER-3 STATS **********
+*	Total packets: 13
+*	Total Delay: 68.23 secs
+*	Total collisions: 7
+*	Throughput: 0.65
+********************************************************
+
+
+
+
+********** 21/09/2021 05:22:38 SENDER-2 STATS **********
+*	Total packets: 13
+*	Total Delay: 76.51 secs
+*	Total collisions: 9
+*	Throughput: 0.591
+********************************************************
+
+
+
+
+********** 21/09/2021 05:22:41 SENDER-4 STATS **********
+*	Total packets: 13
+*	Total Delay: 79.57 secs
+*	Total collisions: 9
+*	Throughput: 0.591
+********************************************************
+
+
+
+
+********** 21/09/2021 05:22:47 SENDER-7 STATS **********
+*	Total packets: 13
+*	Total Delay: 85.2 secs
+*	Total collisions: 18
+*	Throughput: 0.419
+********************************************************
+
+
+
+
+********** 21/09/2021 05:22:49 SENDER-8 STATS **********
+*	Total packets: 13
+*	Total Delay: 87.48 secs
+*	Total collisions: 14
+*	Throughput: 0.481
+********************************************************
+
+
+
+
+********** 21/09/2021 05:22:55 SENDER-5 STATS **********
+*	Total packets: 13
+*	Total Delay: 93.52 secs
+*	Total collisions: 23
+*	Throughput: 0.361
+********************************************************
+
+
+
+
+********** 21/09/2021 05:22:59 SENDER-1 STATS **********
+*	Total packets: 13
+*	Total Delay: 96.99 secs
+*	Total collisions: 18
+*	Throughput: 0.419
+********************************************************
+
+
