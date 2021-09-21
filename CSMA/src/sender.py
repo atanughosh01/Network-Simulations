@@ -3,7 +3,6 @@
 import sys
 import time
 import const
-import random
 import threading
 from gen_packet import Packet
 from datetime import datetime
