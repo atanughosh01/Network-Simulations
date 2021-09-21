@@ -23,21 +23,3 @@ def check_error(seg_data: str) -> bool:
         if total >= 4294967295:
             total -= 4294967295     # 2^32 - 1 = 4294967295
     return 1 if total == 0 else 0
-
-
-# segment_data = [12, 234, 451, 90, 7]
-# if __name__ == "__main__":
-#     for i in range(len(segment_data)):
-#         print(segment_data[i])
-#     print("\n---------------------------\n")
-#     for tup in enumerate(segment_data):
-#         print(tup[0], '\t', tup[1])
-
-
-# segment_data = 'Acknowledgement Packet'
-# if __name__ == "__main__":
-#     for i in range(len(segment_data)):
-#         print(segment_data[i], end='')
-#     print("\n---------------------------\n")
-#     for tup in enumerate(segment_data):
-#         print(tup[0], '\t', tup[1])

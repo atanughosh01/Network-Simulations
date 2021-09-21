@@ -43,7 +43,6 @@ class Channel():
         '''Initialises Channel and maintains flow of sender and receiver threads'''
         self.now = datetime.now()
         curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
-        print("\n" + curr_datetime + " CHANNEL has been initialised\n")
         with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
             rep_file.write("\n" + curr_datetime + " CHANNEL has been initialised\n" + '\n')
         channel_to_receiver_thrdlst = []

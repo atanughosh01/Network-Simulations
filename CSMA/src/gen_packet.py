@@ -23,10 +23,7 @@ class Packet:
 
 
     def make_pkt(self):
-        '''
-        creates packet and returns packet obj
-        '''
-        # byte = file.read(1), segment_data += str(byte)
+        '''creates packet and returns packet obj'''
         preamble = '01'*28                                          # (7 bytes)
         sfd = '10101011'                                            # (1 byte)
         dest_address = '{0:048b}'.format(int(self.dest))            # (6 bytes)
@@ -34,12 +31,10 @@ class Packet:
         seq_to_bits = '{0:08b}'.format(int(self.seq_no))            # (1 byte)
         length_to_bits = '{0:008b}'.format(len(self.segment_data))  # (1 byte)
         data = ""
-        # print(len(self.segment_data))
         for i in range(len(self.segment_data)):
             character = self.segment_data[i]
             data_byte = '{0:08b}'.format(ord(character))
             data = data + data_byte
-        # print(len(src_address))
         packet = preamble + sfd + dest_address + src_address + seq_to_bits + length_to_bits + data
         ck_sum = checker.check_sum(packet)
         packet = packet + ck_sum

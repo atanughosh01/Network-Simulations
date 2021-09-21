@@ -56,6 +56,5 @@ class Receiver:
             file.close()
             self.now = datetime.now()
             curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
-            print("\n" + curr_datetime + " RECEIVER-{}  ||  PACKET RECEIVED\n".format(self.name+1))
             with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
                 rep_file.write("\n" + curr_datetime + " RECEIVER-{}  ||  PACKET RECEIVED\n".format(self.name+1) + '\n')

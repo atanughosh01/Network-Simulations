@@ -3,8 +3,8 @@
 import random
 
 
-total_sender_number = 2
-total_receiver_number = 2
+total_sender_number = 10
+total_receiver_number = 10
 default_datapacket_size = 36
 
 
