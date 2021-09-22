@@ -5,7 +5,7 @@ import random
 
 total_sender_number = 10
 total_receiver_number = 10
-default_datapacket_size = 36
+default_datapacket_size = 46
 
 
 ####################################
