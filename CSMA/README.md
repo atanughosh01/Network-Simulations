@@ -7,7 +7,7 @@ SourceCode and detailed report on One, Non and P-persistent CSMA techniques
     1. Change values of variables in ```const.py``` according to your wish. (Specially ```total_sender_number``` and ```total_receiver_number```).\
     Don't forget to modify the ```outfile_path``` also. Make sure that ```total_sender_number``` = ```total_receiver_number```.
 
-    2. You need to create as many number of input files in ```src/textfiles/input/``` as the integer value you store in ```total_sender_number``` variable\
+    2. You need to create as many number of input files in ```src/textfiles/input/``` as the integer value you store in ```total_sender_number```\
      in ```const.py```, if ```total_sender_number``` > number of input files, the prpgram will throw exceptions and desired results won't show up.
 
     3. Now make sure you're in the ```src``` folder and run ```python3 main.py``` in the terminal after deleting the ```src/textfiles/report.txt``` and\
