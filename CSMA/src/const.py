@@ -3,8 +3,8 @@
 import random
 
 
-total_sender_number = 10
-total_receiver_number = 10
+total_sender_number = 9
+total_receiver_number = 9
 default_datapacket_size = 46
 
 
@@ -21,7 +21,8 @@ non_persistant_waiting_time = random.randint(1, 4)
 ####################################
 # receiver constants
 ####################################
-outfile_path = "/Users/2001a/Documents/GitHub/Network-Simulations/CSMA/src/textfiles/output/"
+# outfile_path = "/Users/Atanu/Documents/GitHub/Network-Simulations/CSMA/src/textfiles/output/"     # for windows
+outfile_path = "/home/inferno/Documents/GitHub/Network-Simulations/CSMA/src/textfiles/output/"       # for linux
 
 
 ####################################

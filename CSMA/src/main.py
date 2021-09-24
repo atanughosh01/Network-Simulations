@@ -1,5 +1,6 @@
 ''' main script to implement all the functionalities defined in the modules'''
 
+import sys
 import const
 import threading
 import multiprocessing
@@ -106,14 +107,15 @@ if __name__ == "__main__":
         print("|        2. Non Persistent Method                    |")
         print("|        3. P-Persistent Methodt                     |")
         print("------------------------------------------------------")
-        choice = int(input(" \nEnter your choice (1, 2 or 3): "))
-        if choice == 1: ch = "One Persistent Method"
-        elif choice == 2: ch = "Non Persistent Method"
-        elif choice == 3: ch = "P Persistent Method"
-        else: ch = "No Method Chosen!"
-        print("Chosen CSMA technique is : {}".format(ch))
-        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
-            rep_file.write('\n-----------------------------------------------------------------------------\n' \
-                            + "\t######## CHOSEN CSMA TECHNIQUE IS : {} ########".format(ch.upper()) \
-                            + '\n-----------------------------------------------------------------------------\n\n')
-        start_simulation(choice)
+        choice = input(" \nEnter your choice (1, 2 or 3): ")
+        if choice == '1': ch = "One Persistent Method"
+        elif choice == '2': ch = "Non Persistent Method"
+        elif choice == '3': ch = "P Persistent Method"
+        else: sys.exit("No Method Were Chosen!")
+        chosen = '\n-----------------------------------------------------------------------------\n' \
+                    + "\t######## CHOSEN CSMA TECHNIQUE IS : {} ########".format(ch.upper()) \
+                    + '\n-----------------------------------------------------------------------------\n\n'
+        print(chosen)
+        with open('textfiles/report.txt', 'a+', encoding='utf-8') as fptr1: fptr1.write(chosen)
+        with open('textfiles/analysis.txt', 'a+', encoding='utf-8') as fptr1: fptr1.write(chosen)
+        start_simulation(int(choice))

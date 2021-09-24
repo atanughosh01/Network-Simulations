@@ -11,8 +11,9 @@ SourceCode and detailed report on One, Non and P-persistent CSMA techniques
      in ```const.py```, if ```total_sender_number``` > number of input files, the prpgram will throw exceptions and desired results won't show up.
 
     3. Now make sure you're in the ```src``` folder and run ```python3 main.py``` in the terminal after deleting the ```src/textfiles/report.txt```\
-     and ```src/textfiles/analysis.txt``` files.
+     and ```src/textfiles/analysis.txt``` files and also writing **Only '0'** (if anything else is written) in ```src/textfiles/checktime.txt```.
 
     4. Keep track of the live changes made on the newly generated ```analysis.txt``` and ```report.txt``` after choosing your desired CSMA\
      technique from the command line.
 
+    5. Press ```ctrl+c``` twice to stop the simulation.
