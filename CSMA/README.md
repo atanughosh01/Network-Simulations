@@ -10,8 +10,8 @@ SourceCode and detailed report on One, Non and P-persistent CSMA techniques
     2. You need to create as many number of input files in ```src/textfiles/input/``` as the integer value you store in ```total_sender_number```\
      in ```const.py```, if ```total_sender_number``` > number of input files, the prpgram will throw exceptions and desired results won't show up.
 
-    3. Now make sure you're in the ```src``` folder and run ```python3 main.py``` in the terminal after deleting the ```src/textfiles/report.txt``` and\
-     ```src/textfiles/analysis.txt``` files.
+    3. Now make sure you're in the ```src``` folder and run ```python3 main.py``` in the terminal after deleting the ```src/textfiles/report.txt```\
+     and ```src/textfiles/analysis.txt``` files.
 
     4. Keep track of the live changes made on the newly generated ```analysis.txt``` and ```report.txt``` after choosing your desired CSMA\
      technique from the command line.
