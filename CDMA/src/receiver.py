@@ -1,77 +1,74 @@
 import sys
-import time
-import socket
-import random
+import const
+import threading
+
+# curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+class Receiver:
+
+    def __init__(self, name, wls_table, channel_to_receiver):
+        self.name                 = name
+        self.wls_table            = wls_table
+        self.channel_to_receiver  = channel_to_receiver
+        self.sender_to_receiver   = self.select_sender()
+        self.code_length          = len(self.wls_table[0])
 
 
-def wait_random_time():
-    x = random.randint(0, 5)
-    if x <= 1: time.sleep(2)
+    def select_sender(self):
+        return self.name
+  
 
+    def get_char(self, data):
+        print("Data:" + str(data))
+        summation = 0
+        for i in range(8): summation += pow(2,i) * data[7-i]
+        character = chr(summation)
+        print("Char received: " + character)
+        return character
+    
 
-def check_error(frame):
-    count_ones = 0
-    for ch in frame:
-        if ch == '1': count_ones += 1
-    return count_ones % 2
+    def open_file(self, sender):
+        try:
+            file_name = const.output_file_path + 'output' + str(sender+1) + '.txt'
+            fptr = open(file_name, 'a+', encoding='utf-8')
+        except FileNotFoundError as fnfe:
+            print("EXCEPTION CAUGHT : {}".format(str(fnfe)))
+            sys.exit("No file exists with name {} !".format(file_name))
+        return fptr
+    
 
+    def receive_data(self):
 
-def extract_message(frame):
-    endidx = -1
-    for i in range(len(frame)-1):
-        if frame[i] == '/' and endidx == -1:
-            endidx = i
-            break
-    return frame[:endidx]
+        print("(Receiver{}:) Receiver{} receives data from sender{}".format(self.name+1, self.name+1, self.sender_to_receiver+1))
+        total_data = []
+        while True:
+            channel_data = self.channel_to_receiver.recv()
 
+            # extract data
+            summation = 0
+            for i in range(len(channel_data)):
+                summation += channel_data[i] * self.wls_table[self.sender_to_receiver][i]
+            
+            # extract data bit
+            summation /= self.code_length
+            if summation == 1: bit = 1
+            elif summation == -1: bit = 0
+            else: bit = -1
+            
+            print("(Receiver{}:) Bit received: {}".format(self.name+1, bit))
 
-def extract_count(frame):
-    startidx = -1
-    endidx = -1
-    for i in range(len(frame)-1):
-        if frame[i] == '/':
-            if startidx == -1: startidx = i+1
-            else: endidx = i
-    cnt = frame[startidx:endidx]
-    return int(cnt)
+            if len(total_data) < 8 and bit != -1:
+                #print("Receiver{} -->> Lenght of total_data {}".format(self.name+1, len(total_data)))
+                total_data.append(bit)
 
+            if(len(total_data) == 8):
+                character = self.get_char(total_data)
+                output_file = self.open_file(self.sender_to_receiver)
+                output_file.write(character)
+                output_file.close()
+                total_data = []
+                
 
-def extract_status(frame):
-    count = 0
-    startidx = -1
-    for i in range(len(frame)-1):
-        if frame[i] == '/': count += 1
-        if count == 2 and startidx == -1:
-            startidx = i+1
-            break
-    return frame[startidx:]
-
-
-def Main(senderno):
-    print('Initiating Receiver #', senderno)
-    host = '127.0.0.2'
-    port = 9090
-    receiver_side_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    receiver_side_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    receiver_side_socket.connect((host, port))
-
-    while True:
-        print()
-        data = receiver_side_socket.recv(1024).decode('utf-8')
-        msg = extract_message(data)
-        if not msg:  break
-        if msg == 'q0':  break
-        print('Received from channel :', str(data))
-        wait_random_time()
-        if check_error(msg) == 0: rdata = 'ACK'
-        else: rdata = 'NAK'
-        print('Sending to channel :', str(rdata))
-        receiver_side_socket.send(rdata.encode())
-        
-    receiver_side_socket.close()
-
-
-if __name__ == '__main__':
-    if len(sys.argv) > 1: senderno = int(sys.argv[1])
-    else: senderno = 1
-    Main(senderno)
+    def start_receiver(self):
+        receiver_thread = threading.Thread(name='Receiver-Thread', target=self.receive_data)
+        receiver_thread.start()
+        receiver_thread.join()
