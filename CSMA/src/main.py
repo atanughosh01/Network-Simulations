@@ -93,29 +93,30 @@ def start_simulation(technique: int):
     for thread in sender_threads:
         thread.join()
 
-    channel_thread.join()
-
     for thread in receiver_threads:
         thread.join()
 
+    channel_thread.join()
+
+
 
 if __name__ == "__main__":
-    while True:
-        print("------------------------------------------------------")
-        print("|    Choose the CSMA technique you want to use -     |")
-        print("|        1. One Persistent Method                    |")
-        print("|        2. Non Persistent Method                    |")
-        print("|        3. P-Persistent Methodt                     |")
-        print("------------------------------------------------------")
-        choice = input(" \nEnter your choice (1, 2 or 3): ")
-        if choice == '1': ch = "One Persistent Method"
-        elif choice == '2': ch = "Non Persistent Method"
-        elif choice == '3': ch = "P Persistent Method"
-        else: sys.exit("No Method Were Chosen!")
-        chosen = '\n-----------------------------------------------------------------------------\n' \
-                    + "\t######## CHOSEN CSMA TECHNIQUE IS : {} ########".format(ch.upper()) \
-                    + '\n-----------------------------------------------------------------------------\n\n'
-        print(chosen)
-        with open('textfiles/report.txt', 'a+', encoding='utf-8') as fptr1: fptr1.write(chosen)
-        with open('textfiles/analysis.txt', 'a+', encoding='utf-8') as fptr1: fptr1.write(chosen)
-        start_simulation(int(choice))
+
+    print("------------------------------------------------------")
+    print("|    Choose the CSMA technique you want to use -     |")
+    print("|        1. One Persistent Method                    |")
+    print("|        2. Non Persistent Method                    |")
+    print("|        3. P-Persistent Methodt                     |")
+    print("------------------------------------------------------")
+    choice = input(" \nEnter your choice (1, 2 or 3): ")
+    if choice == '1': ch = "One Persistent Method"
+    elif choice == '2': ch = "Non Persistent Method"
+    elif choice == '3': ch = "P Persistent Method"
+    else: sys.exit("No Method Were Chosen!")
+    chosen = '\n-----------------------------------------------------------------------------\n' \
+            + "\t######## CHOSEN CSMA TECHNIQUE IS : {} ########".format(ch.upper()) \
+            + '\n-----------------------------------------------------------------------------\n\n'
+    print(chosen)
+    with open('textfiles/report.txt', 'a+', encoding='utf-8') as fptr1: fptr1.write(chosen)
+    with open('textfiles/analysis.txt', 'a+', encoding='utf-8') as fptr2: fptr2.write(chosen)
+    start_simulation(int(choice))
