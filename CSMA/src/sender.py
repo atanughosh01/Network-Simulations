@@ -37,7 +37,7 @@ class Sender:
 
 
     def open_file(self, file_name):
-        '''Opens file in append mode and returns file-pointer-object'''
+        '''Opens file in read mode and returns file-pointer-object'''
         try:
             self.now = datetime.now()
             curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
