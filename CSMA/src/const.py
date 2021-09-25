@@ -1,4 +1,4 @@
-'''module for defining values that remain constant throughout the flow during execution'''
+'''module for assiging values to variables that remain constant throughout the flow during execution'''
 
 import random
 
