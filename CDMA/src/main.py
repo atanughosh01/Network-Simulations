@@ -122,6 +122,11 @@ if __name__ == "__main__":
     if const.total_sender_number <= 1: wls_table = [1]
     else: build_walsh_table(NUM, 0, NUM - 1, 0, NUM - 1, False)
 
-    with open('textfiles/report.txt', 'a+', encoding='utf-8') as fptr: fptr.write("\nWALSH TABLE :" + str(wls_table))
-    print("\nWALSH TABLE :", wls_table)
+    with open('textfiles/report.txt', 'a+', encoding='utf-8') as fptr:
+        fptr.write("\n\n------------------------------------------------------------------------------------\n\tWALSH TABLE : {}\
+        \n------------------------------------------------------------------------------------\n\n".format(str(wls_table)))
+
+    print("\n\n------------------------------------------------------------------------------------\n\tWALSH TABLE : {}\
+        \n------------------------------------------------------------------------------------\n\n".format(str(wls_table)))
+
     start_simulation(wls_table)
