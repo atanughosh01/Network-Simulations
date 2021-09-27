@@ -23,7 +23,7 @@ class Sender:
             fptr = open(file_name, 'r', encoding='utf-8')
         except FileNotFoundError as fnfe:
             curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            print(curr_datetime + " EXCEPTION CAUGHT : {}".format(str(fnfe)))
+            print("{} EXCEPTION CAUGHT : {}".format(curr_datetime, str(fnfe)))
             sys.exit("File with name {} is not found!".format(file_name))
         return fptr
 
@@ -43,19 +43,19 @@ class Sender:
                 ##############################################
                 self.sender_to_channel.send(data_to_send)
                 ##############################################
-                print("(Sender{}:) data bit send {}".format(self.name+1, data_bit))
                 curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                print("{} ||| SENDER-{}     ||  DATA BIT SEND {}".format(curr_datetime, self.name+1, data_bit))
                 with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
-                    rep_file.write(curr_datetime + " SENDER-{}    ||  DATA BIT SEND {}".format(self.name+1, data_bit) + '\n')
+                    rep_file.write("\n{} ||| SENDER-{}     ||  DATA BIT SEND {}".format(curr_datetime, self.name+1, data_bit))
                 ##############################################
                 time.sleep(1)
                 ##############################################
             byte = file.read(const.default_data_packet_size)
 
-        print("(Sender{}:) DONE SENDING...".format(self.name + 1))
         curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        print("{} ||| SENDER-{}     ||  DONE SENDING...".format(curr_datetime, self.name+1))
         with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
-            rep_file.write(curr_datetime + " SENDER-{}    ||  DONE SENDING...".format(self.name+1) + '\n')
+            rep_file.write("\n{} ||| SENDER-{}     ||  DONE SENDING...".format(curr_datetime, self.name+1))
 
 
     def start_sender(self):
