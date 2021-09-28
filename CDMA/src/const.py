@@ -6,6 +6,3 @@ default_data_packet_size  = 1
 
 input_file_path           = "./textfiles/input/"
 output_file_path          = "./textfiles/output/"
-
-# input_file_path           = "./input/"
-# output_file_path          = "./output/"
