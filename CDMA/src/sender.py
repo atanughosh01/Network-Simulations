@@ -12,8 +12,10 @@ class Sender:
 
     def __init__(self, name, walsh_code, sender_to_channel):
         self.name               = name
-        self.sender_to_channel  = sender_to_channel # a pipe
         self.walsh_code         = walsh_code        # tuple containg walshCode
+        self.sender_to_channel  = sender_to_channel # a pipe
+        self.pkt_count          = 0
+        self.start              = 0
 
 
     def open_file(self, sender):
@@ -30,6 +32,11 @@ class Sender:
 
     def send_data(self):
         '''Sends data continuously'''
+        curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        print("{} ||| SENDER-{}     ||  STARTS SENDING TO RECEIVER-{}".format(curr_datetime, self.name+1, self.name+1))
+        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+            rep_file.write("\n{} ||| SENDER-{}     ||  STARTS SENDING TO RECEIVER-{}".format(curr_datetime, self.name+1, self.name+1))
+        self.start = time.time()
         file = self.open_file(self.name)
         byte = file.read(const.default_data_packet_size)
         while byte:
@@ -43,6 +50,7 @@ class Sender:
                 ##############################################
                 self.sender_to_channel.send(data_to_send)
                 ##############################################
+                self.pkt_count += 1
                 curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                 print("{} ||| SENDER-{}     ||  DATA BIT SEND {}".format(curr_datetime, self.name+1, data_bit))
                 with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
@@ -56,6 +64,14 @@ class Sender:
         print("{} ||| SENDER-{}     ||  DONE SENDING...".format(curr_datetime, self.name+1))
         with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
             rep_file.write("\n{} ||| SENDER-{}     ||  DONE SENDING...".format(curr_datetime, self.name+1))
+
+        curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        with open('textfiles/analysis.txt', 'a+', encoding='utf-8') as rep_file:
+            rep_file.write("\n\n********** {} SENDER-{} STATS **********".format(curr_datetime, self.name+1) + '\n' + \
+                            "*\tTotal packets: {}".format(self.pkt_count) + '\n' + \
+                            "*\tTotal Delay: {} secs".format(round(time.time() - self.start, 2)) + '\n' + \
+                            # "*\tThroughput: {}".format(round(self.pkt_count/(self.pkt_count + self.collision_count), 3)) + '\n' + \
+                            "********************************************************\n\n" + '\n')
 
 
     def start_sender(self):
