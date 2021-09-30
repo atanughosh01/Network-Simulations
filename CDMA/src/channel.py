@@ -29,6 +29,7 @@ class Channel:
                 self.sync_value += 1
 
                 if self.sync_value == const.total_sender_number:
+                    
                     # distribute over every receiver
                     for receiver in range(const.total_receiver_number):
                         self.channel_to_receiver[receiver].send(self.channel_data)
