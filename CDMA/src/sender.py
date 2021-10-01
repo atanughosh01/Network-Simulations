@@ -13,7 +13,7 @@ class Sender:
     def __init__(self, name, walsh_code, sender_to_channel):
         self.name               = name
         self.walsh_code         = walsh_code        # tuple containg walshCode
-        self.sender_to_channel  = sender_to_channel # a pipe
+        self.sender_to_channel  = sender_to_channel # a multiprocessing pipe
         self.pkt_count          = 0
         self.start              = 0
 
