@@ -6,19 +6,18 @@ PATH = "./textfiles/input/input"
 file_no = int(input('Enter Number of Files : '))
 msg = input('Enter text : ')
 
-if len(msg) == 15 or len(msg) == 30 or len(msg) == 50:
-    while file_no:
-        with open(PATH + str(file_no) + '.txt', 'w', encoding='utf-8' ) as fptr: fptr.write(msg)
-        file_no -= 1
+def generate_files(num):
+    '''Function for generating files'''
+    while num:
+        with open(PATH + str(num) + '.txt', 'w', encoding='utf-8' ) as fptr: fptr.write(msg)
+        num -= 1
     print('Done!')
 
+if len(msg) == 15 or len(msg) == 30 or len(msg) == 50: generate_files(file_no)
 else:
     consent = input("Not Desired Length. Still Want to Write? (y/N): ")
-    if consent == 'y' or consent == 'Y':
-        while file_no:
-            with open(PATH + str(file_no) + '.txt', 'w', encoding='utf-8' ) as fptr: fptr.write(msg)
-            file_no -= 1
-        print('Done!')
+    # if consent == 'y' or consent == 'Y': generate_files(file_no)
+    if consent in ('y', 'Y'): generate_files(file_no)
     else: print('Nothing Written!')
 
 
