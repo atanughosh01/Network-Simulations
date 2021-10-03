@@ -23,7 +23,7 @@ class Receiver:
         curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         print("{} ||| DATA : {}".format(curr_datetime, str(data)))
         with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
-            rep_file.write("\n{} ||| DATA : {}".format(curr_datetime, str(data)))
+            rep_file.write("\n\n{} ||| DATA : {}".format(curr_datetime, str(data)))
         summation = 0
         for i in range(8): summation += pow(2,i) * data[7-i]
         character = chr(summation)
