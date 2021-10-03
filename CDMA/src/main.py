@@ -81,14 +81,14 @@ def start_simulation(table):
     ########################################################################################
     # making one channel thread, and multiple sender-receiver threads, and add them to lists
     ########################################################################################
-    channel_thread = threading.Thread(name="Channel-Process", target=channel.start_channel)
+    channel_thread = threading.Thread(name="Channel-Thread", target=channel.start_channel)
 
     for i in range(len(sender_list)):
-        s = threading.Thread(name="Sender-Process" + str(i+1), target=sender_list[i].start_sender)
+        s = threading.Thread(name="Sender-Thread" + str(i+1), target=sender_list[i].start_sender)
         sender_threads.append(s)
 
     for i in range(len(receiver_list)):
-        r = threading.Thread(name="Receiver"+str(i+1), target=receiver_list[i].start_receiver)
+        r = threading.Thread(name="Receiver-Thread"+str(i+1), target=receiver_list[i].start_receiver)
         receiver_threads.append(r)
 
 
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     if const.total_sender_number <= 1: wls_table = [1]
     else: build_walsh_table(NUM, 0, NUM - 1, 0, NUM - 1, False)
 
-    with open('textfiles/report.txt', 'a+', encoding='utf-8') as fptr:
+    with open('textfiles/logfile.txt', 'a+', encoding='utf-8') as fptr:
         fptr.write("\n\n------------------------------------------------------------------------------------\n\tWALSH TABLE : {}\
         \n------------------------------------------------------------------------------------\n\n".format(str(wls_table)))
 

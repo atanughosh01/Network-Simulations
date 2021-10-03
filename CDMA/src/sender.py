@@ -14,6 +14,7 @@ class Sender:
         self.name               = name
         self.walsh_code         = walsh_code        # tuple containg walshCode
         self.sender_to_channel  = sender_to_channel # a multiprocessing pipe
+        # self.lock               = lock
         self.start              = 0
         self.bit_count          = 0
         self.total_delay        = 0
@@ -34,8 +35,8 @@ class Sender:
     def send_data(self):
         '''Sends data continuously'''
         curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        print("{} ||| SENDER-{}     ||  STARTS SENDING TO RECEIVER-{}".format(curr_datetime, self.name+1, self.name+1))
-        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+        # print("{} ||| SENDER-{}     ||  STARTS SENDING TO RECEIVER-{}".format(curr_datetime, self.name+1, self.name+1))
+        with open('textfiles/logfile.txt', 'a+', encoding='utf-8') as rep_file:
             rep_file.write("\n{} ||| SENDER-{}     ||  STARTS SENDING TO RECEIVER-{}".format(curr_datetime, self.name+1, self.name+1))
         self.start = time.time()
         file = self.open_file(self.name)
@@ -49,42 +50,36 @@ class Sender:
                 for j in self.walsh_code:
                     data_to_send.append(j * data_bit)
                 ##############################################
+                # self.lock.acquire()
                 self.sender_to_channel.send(data_to_send)
+                # self.lock.release()
                 ##############################################
                 self.bit_count += 1
                 curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-                print("{} ||| SENDER-{}     ||  DATA BIT SEND {}".format(curr_datetime, self.name+1, data_bit))
-                with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                # print("{} ||| SENDER-{}     ||  DATA BIT SEND {}".format(curr_datetime, self.name+1, data_bit))
+                with open('textfiles/logfile.txt', 'a+', encoding='utf-8') as rep_file:
                     rep_file.write("\n{} ||| SENDER-{}     ||  DATA BIT SEND {}".format(curr_datetime, self.name+1, data_bit))
                 ##############################################
                 time.sleep(1)
                 ##############################################
             byte = file.read(const.default_data_packet_size)
 
-            self.total_delay = self.bit_count / round(time.time() - self.start, 2)
-
+            self.total_delay = round(self.bit_count / round(time.time()-self.start, 2), 2) * 1000
 
         curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         with open('textfiles/analysis.txt', 'a+', encoding='utf-8') as rep_file:
             rep_file.write("\n\n********** {} SENDER-{} STATS **********\n".format(curr_datetime, self.name+1) + \
-                            "--> Total Bits transferred: {}\n".format(self.bit_count) + \
-                            "--> Total Delay: {} seconds\n".format(self.total_delay) + \
-                            "--> Throughput: {}\n".format(round(self.bit_count/self.total_delay, 3)) + \
+                            "--> {}-Sender System\n".format(const.total_sender_number) + \
+                            "--> Total Bits Transferred: {}\n".format(self.bit_count) + \
+                            "--> Total Time Taken: {} miliseconds\n".format(self.total_delay) + \
+                            "--> Throughput: {} kbps\n".format(round(self.bit_count/self.total_delay, 3)) + \
                             "********************************************************\n\n" + '\n')
 
 
         curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        print("{} ||| SENDER-{}     ||  DONE SENDING...".format(curr_datetime, self.name+1))
-        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+        # print("{} ||| SENDER-{}     ||  DONE SENDING...".format(curr_datetime, self.name+1))
+        with open('textfiles/logfile.txt', 'a+', encoding='utf-8') as rep_file:
             rep_file.write("\n{} ||| SENDER-{}     ||  DONE SENDING...".format(curr_datetime, self.name+1))
-
-        # curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        # with open('textfiles/analysis.txt', 'a+', encoding='utf-8') as rep_file:
-        #     rep_file.write("\n\n********** {} SENDER-{} STATS **********".format(curr_datetime, self.name+1) + '\n' + \
-        #                     "*\tTotal Bits: {}".format(self.bit_count) + '\n' + \
-        #                     "*\tTotal Delay: {} secs".format(round(time.time() - self.start, 2)) + '\n' + \
-        #                     # "*\tThroughput: {}".format(round(self.bit_count/(self.bit_count + self.collision_count), 3)) + '\n' + \
-        #                     "********************************************************\n\n" + '\n')
 
 
     def start_sender(self):

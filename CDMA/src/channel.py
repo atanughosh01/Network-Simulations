@@ -20,8 +20,8 @@ class Channel:
                 data = []
                 data = self.sender_to_channel.recv()
                 curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-                print("{} ||| CHANNEL...   ||  {}".format(curr_datetime, str(data)))
-                with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
+                # print("{} ||| CHANNEL...   ||  {}".format(curr_datetime, str(data)))
+                with open('textfiles/logfile.txt', 'a+', encoding='utf-8') as rep_file:
                     rep_file.write("\n{} ||| CHANNEL...   ||  {}".format(curr_datetime, str(data)))
   
                 # update channel data
