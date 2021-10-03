@@ -14,7 +14,6 @@ class Sender:
         self.name               = name
         self.walsh_code         = walsh_code        # tuple containg walshCode
         self.sender_to_channel  = sender_to_channel # a multiprocessing pipe
-        # self.lock               = lock
         self.start              = 0
         self.bit_count          = 0
         self.total_delay        = 0
@@ -50,9 +49,7 @@ class Sender:
                 for j in self.walsh_code:
                     data_to_send.append(j * data_bit)
                 ##############################################
-                # self.lock.acquire()
                 self.sender_to_channel.send(data_to_send)
-                # self.lock.release()
                 ##############################################
                 self.bit_count += 1
                 curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
@@ -60,7 +57,7 @@ class Sender:
                 with open('textfiles/logfile.txt', 'a+', encoding='utf-8') as rep_file:
                     rep_file.write("\n{} ||| SENDER-{}     ||  DATA BIT SEND {}".format(curr_datetime, self.name+1, data_bit))
                 ##############################################
-                time.sleep(1)
+                time.sleep(const.sender_sleep_time)
                 ##############################################
             byte = file.read(const.default_data_packet_size)
 
