@@ -61,15 +61,15 @@ class Sender:
                 ##############################################
             byte = file.read(const.default_data_packet_size)
 
-            self.total_delay = round(self.bit_count / round(time.time()-self.start, 2), 2) * 1000
+            self.total_delay = round((time.time()-self.start), 2)
 
         curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         with open('textfiles/analysis.txt', 'a+', encoding='utf-8') as rep_file:
             rep_file.write("\n\n********** {} SENDER-{} STATS **********\n".format(curr_datetime, self.name+1) + \
                             "--> {}-Sender System\n".format(const.total_sender_number) + \
                             "--> Total Bits Transferred: {}\n".format(self.bit_count) + \
-                            "--> Total Time Taken: {} miliseconds\n".format(self.total_delay) + \
-                            "--> Throughput: {} kbps\n".format(round(self.bit_count/self.total_delay, 3)) + \
+                            "--> Total Time Taken: {} seconds\n".format(self.total_delay) + \
+                            "--> Throughput: {} bps\n".format(round(self.bit_count/self.total_delay, 3)) + \
                             "********************************************************\n\n" + '\n')
 
 
