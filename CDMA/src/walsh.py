@@ -32,10 +32,11 @@ def build_walsh_table(length, i1,i2, j1,j2, is_complement):
 
 
 if __name__ == "__main__":
-    num_of_stations = 5
+    num_of_stations = int(input("Enter Number of Stations : "))
     num = get_next_powerof2(num_of_stations)
     wls_table = [[0 for _ in range(num)] for _ in range(num)]
 
     build_walsh_table(num, 0, num - 1, 0, num - 1, False)
     print(wls_table)
     print(len(wls_table[0]))
+    print(num)
