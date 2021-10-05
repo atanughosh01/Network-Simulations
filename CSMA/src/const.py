@@ -21,8 +21,8 @@ non_persistant_waiting_time = random.randint(1, 4)
 ####################################
 # receiver constants
 ####################################
-# outfile_path = "/Users/Atanu/Documents/GitHub/Network-Simulations/CSMA/src/textfiles/output/"     # for windows
-outfile_path = "/home/inferno/Documents/GitHub/Network-Simulations/CSMA/src/textfiles/output/"       # for linux
+input_file_path = "./textfiles/input/"
+outfile_path = "./textfiles/output/"
 
 
 ####################################

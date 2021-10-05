@@ -1,6 +1,6 @@
 # CDMA
 
-SourceCode and detailed report on Walsh encoded CDMA multiple access technique
+SourceCode and detailed report on Walsh encoded CDMA multiple access technique.
 
 * To simulate the project properly-
 
@@ -12,8 +12,8 @@ SourceCode and detailed report on Walsh encoded CDMA multiple access technique
      throw exceptions and desired results may not show up.
 
     3. Now make sure you're in the ```./src``` folder and run ```python3 main.py``` in the terminal **after deleting the\
-    ```./src/textfiles/logfile.txt```, ```./src/textfiles/analysis.txt``` and ```output.txt``` files from ```.src/textfiles/output/``` folder**
+    ```./src/textfiles/logfile.txt```, ```./src/textfiles/analysis.txt``` and ```output.txt``` files from ```.src/textfiles/output/``` folder**.
 
-    4. Keep track of the live changes made on the newly generated ```analysis.txt``` and ```logfile.txt```,
+    4. Keep track of the live changes made on the newly generated ```analysis.txt``` and ```logfile.txt```.
 
     5. Press ```ctrl+c``` twice to stop the simulation.
