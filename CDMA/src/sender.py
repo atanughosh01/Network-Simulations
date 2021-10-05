@@ -1,4 +1,4 @@
-'''Sender Module for data sending'''
+'''Sender Module for walsh encoded data sending'''
 
 import sys
 import time
@@ -34,7 +34,6 @@ class Sender:
     def send_data(self):
         '''Sends data continuously'''
         curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        # print("{} ||| SENDER-{}     ||  STARTS SENDING TO RECEIVER-{}".format(curr_datetime, self.name+1, self.name+1))
         with open('textfiles/logfile.txt', 'a+', encoding='utf-8') as rep_file:
             rep_file.write("\n{} ||| SENDER-{}     ||  STARTS SENDING TO RECEIVER-{}".format(curr_datetime, self.name+1, self.name+1))
         self.start = time.time()
@@ -53,7 +52,6 @@ class Sender:
                 ##############################################
                 self.bit_count += 1
                 curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-                # print("{} ||| SENDER-{}     ||  DATA BIT SEND {}".format(curr_datetime, self.name+1, data_bit))
                 with open('textfiles/logfile.txt', 'a+', encoding='utf-8') as rep_file:
                     rep_file.write("\n{} ||| SENDER-{}     ||  DATA BIT SEND {}".format(curr_datetime, self.name+1, data_bit))
                 ##############################################

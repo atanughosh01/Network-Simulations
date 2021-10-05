@@ -1,3 +1,5 @@
+'''MAIN Module for implementing all functionaties by threading and multiprocessing'''
+
 import const
 import threading
 import multiprocessing
@@ -6,13 +8,15 @@ from channel import Channel
 from receiver import Receiver
 
 
-def get_next_powerof2(n):
+def get_next_powerof2(num):
+    '''returns next integer of n which is a power of 2'''
     power = 1
-    while power < n: power *= 2
+    while power < num: power *= 2
     return power
 
 
-def build_walsh_table(length, i1,i2, j1,j2, is_complement):
+def build_walsh_table(length, i1, i2, j1, j2, is_complement):
+    '''Walsh code encoder function'''
     if length == 2:
         if not is_complement:
             wls_table[i1][j1] = 1
@@ -39,6 +43,7 @@ def build_walsh_table(length, i1,i2, j1,j2, is_complement):
 
 
 def start_simulation(table):
+    '''Starts simulating the whole project'''
 
     write_from_channel_to_receiver = []
     read_from_channel_to_receiver = []
