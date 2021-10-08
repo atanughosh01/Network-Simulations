@@ -72,7 +72,6 @@ class Sender:
 
 
         curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        # print("{} ||| SENDER-{}     ||  DONE SENDING...".format(curr_datetime, self.name+1))
         with open('textfiles/logfile.txt', 'a+', encoding='utf-8') as rep_file:
             rep_file.write("\n{} ||| SENDER-{}     ||  DONE SENDING...".format(curr_datetime, self.name+1))
 
