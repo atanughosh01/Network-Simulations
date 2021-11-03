@@ -11,8 +11,8 @@ outFilePath = "./output/"
 dropOutProb = 0.1
 injectErrorProb = 0.2
 delayProb = 0.3
-delay = 0.75 
+delay = 0.75
 
-#error const
+# error const
 minError = 5
 maxError = 75

@@ -1,6 +1,4 @@
-import multiprocessing
 import time
-import helper
 import const
 import sys
 from createPacket import *
@@ -30,7 +28,7 @@ class Receiver:
 
     def openFile(self, filepath):
         try:
-            file = open(filepath, 'a+')
+            file = open(filepath, 'a+', encoding='utf-8')
         except IOError:
             sys.exit("File path not exit!")
         return file
