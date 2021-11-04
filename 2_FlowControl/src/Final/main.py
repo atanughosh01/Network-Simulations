@@ -99,7 +99,6 @@ def start_simulation(technique: int):
     channel_thread.join()
 
 
-
 if __name__ == "__main__":
 
     print("------------------------------------------------------")
