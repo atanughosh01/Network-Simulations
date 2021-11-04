@@ -1,70 +1,98 @@
-'''Channel Module for packet channelization'''
-
-import time
-import const
 import threading
-from datetime import datetime
+import random
+import time
+# from gen_packet import Packet
+import const
 
 
-class Channel():
-    '''Channel Class to implement packet channelizing functionalities'''
+class Channel:
+    def __init__(self, senderToChannel, channelToSender, receiverToChannel, channelToReceiver):
 
-    def __init__(self, sender_to_channel, channel_to_sender: list, receiver_to_channel: list, channel_to_receiver: list):
-        self.is_active           = False
-        self.now                 = datetime.now()
-        self.sender_to_channel   = sender_to_channel
-        self.channel_to_sender   = channel_to_sender
-        self.receiver_to_channel = receiver_to_channel
-        self.channel_to_receiver = channel_to_receiver
+        self.senderToChannel = senderToChannel
+        self.channelToSender = channelToSender
+        self.receiverToChannel = receiverToChannel
+        self.channelToReceiver = channelToReceiver
 
+    def injectError(self, packet):
+        noOfErrors = random.randint(const.minError, const.maxError)
+        listOFChar = list(packet.packet)
+        length = packet.decodeLength()
+        for _ in range(noOfErrors):
+            pos = random.randint(0, length-1)
+            if listOFChar[pos] == '1':
+                listOFChar[pos] = '0'
+            else:
+                listOFChar[pos] = '1'
 
-    def transfer_pkt_from_sender_to_receiver(self):
-        '''Involved in channelization of packets from Sender to Receiver'''
+        packet.packet = ''.join(listOFChar)
+
+    def channelizePktFromSenderToReceiver(self, sender):
+        time.sleep(0.5)
         while True:
-            pkt = self.sender_to_channel.recv()
-            self.is_active = True
-            time.sleep(const.channel_propagation_time)
-            self.is_active = False
-            receiver = pkt.decode_dest_address()
-            self.channel_to_receiver[receiver].send(pkt)
+            packet = self.senderToChannel[sender].recv()
+            receiver = packet.decodeDestAddress()
+            if random.random() <= const.dropOutProb:
+                # returns a float between (0,1)
+                print("CHANNEL -->> PACKET DROPPED OUT")
+            else:
+                if random.random() <= const.injectErrorProb:
+                    print("CHANNEL -->> INJECTING ERROR IN PACKET")
+                    self.injectError(packet)
 
+                if random.random() <= const.delayProb:
+                    print("CHANNEL -->> INTRODUCING DELAY IN PACKET")
+                    time.sleep(const.delay)
 
-    def tarnsfer_response_from_receiver_to_sender(self, sender: int):
-        '''Involved in channelization of responses (ack) from Receiver to Sender'''
+                self.channelToReceiver[receiver].send(packet)
+                print("CHANNEL -->> PACKET SENT")
+
+    def channelizeACKFromReceiverToSender(self, receiver):
+        time.sleep(0.5)
         while True:
-            if self.is_active: self.channel_to_sender[sender].send(str(1))  # channel is busy
-            else: self.channel_to_sender[sender].send(str(0))  # channel is idle
+            ack = self.receiverToChannel[receiver].recv()
+            sender = ack.decodeDestAddress()
+            if random.random() <= const.dropOutProb:
+                print("CHANNEL -->> ACK DROPPED OUT")
+            else:
+                if random.random() <= const.injectErrorProb:
+                    print("CHANNEL -->> INJECTING ERROR IN ACK")
+                    self.injectError(ack)
+                if random.random() <= const.delayProb:
+                    print("CHANNEL -->> INTRODUCING DELAY IN ACK")
+                    time.sleep(const.delay)
 
+                self.channelToSender[sender].send(ack)
+                print("CHANNEL -->> ACK SENT")
 
-    ##########################################
-    # This function operates on Channel-Object
-    ##########################################
-    def initiate_channel_process(self):
-        '''Initialises Channel and maintains flow of sender and receiver threads'''
-        self.now = datetime.now()
-        curr_datetime = self.now.strftime("%d/%m/%Y %H:%M:%S")
-        with open('textfiles/report.txt', 'a+', encoding='utf-8') as rep_file:
-            rep_file.write("\n" + curr_datetime + " CHANNEL has been initialised\n" + '\n')
-        channel_to_receiver_thrdlst = []
-        channel_to_sender_thrdlst = []
+    def startChannel(self):
+
+        senderToReceiverThreadList = []
+        receiverToSenderThreadList = []
         sender = 0
-
-        pkt_thrd = threading.Thread(name="PacketThread-"+str(sender+1), target=self.transfer_pkt_from_sender_to_receiver)
-        channel_to_receiver_thrdlst.append(pkt_thrd)
-
-        for _ in range(const.total_sender_number):
-            resp_thrd = threading.Thread(name="ResponseThread-"+str(sender+1), target=self.tarnsfer_response_from_receiver_to_sender, args=(sender,))
-            channel_to_sender_thrdlst.append(resp_thrd)
+        receiver = 0
+        print("\nCHANNEL is running")
+        for _ in range(const.totalSenderNumber):
+            t = threading.Thread(name='PktThread'+str(sender+1),
+                                 target=self.channelizePktFromSenderToReceiver,
+                                 args=(sender,))
+            senderToReceiverThreadList.append(t)
             sender += 1
 
-        for thread in channel_to_receiver_thrdlst:
+        for _ in range(const.totalReceiverNumber):
+            t = threading.Thread(name='ACKThread'+str(receiver+1),
+                                 target=self.channelizeACKFromReceiverToSender,
+                                 args=(receiver,))
+            receiverToSenderThreadList.append(t)
+            receiver += 1
+
+        for thread in senderToReceiverThreadList:
             thread.start()
 
-        for thread in channel_to_sender_thrdlst:
+        for thread in receiverToSenderThreadList:
             thread.start()
 
-        for thread in channel_to_receiver_thrdlst:
+        for thread in senderToReceiverThreadList:
             thread.join()
 
-        for thread in channel_to_sender_thrdlst:
+        for thread in receiverToSenderThreadList:
             thread.join()

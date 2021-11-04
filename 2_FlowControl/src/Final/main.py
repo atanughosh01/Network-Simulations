@@ -1,121 +1,118 @@
-''' main script to implement all the functionalities defined in the modules'''
-
-import sys
-import const
 import threading
 import multiprocessing
-from sender import Sender
+import stop_n_wait
+import go_back_n
+import selective_repeat
+# from channel import *
+# from receiver import *
 from channel import Channel
 from receiver import Receiver
+import const
 
 
-def start_simulation(technique: int):
-    '''Simulate the whole CSMA implementation'''
+def start():
 
-    # write_from_sender_to_channel = []
-    # read_from_sender_to_channel = []
+    writeFromSenderToChannel = []
+    readFromSenderToChannel = []
 
-    write_from_channel_to_sender = []
-    read_from_channel_to_sender = []
+    writeFromChannelToSender = []
+    readFromChannelToSender = []
 
-    write_from_channel_to_receiver = []
-    read_from_channel_to_receiver = []
+    writeFromChannelToReceiver = []
+    readFromChannelToReceiver = []
 
-    # write_from_receiver_to_channel = []
-    read_from_receiver_to_channel = []
+    writeFromReceiverToChannel = []
+    readFromReceiverToChannel = []
 
+    for i in range(const.totalSenderNumber):
+        readHead, writeHead = multiprocessing.Pipe()
+        writeFromSenderToChannel.append(writeHead)
+        readFromSenderToChannel.append(readHead)
 
-    ######################################################################################
-    # Pipe() returns a tuple (of two objects) whose 1st-one can read and 2nd-one can write
-    ######################################################################################
-    for _ in range(const.total_sender_number):
-        read_head, write_head = multiprocessing.Pipe()
-        read_from_channel_to_sender.append(read_head)       # goes to sender
-        write_from_channel_to_sender.append(write_head)     # goes to channel
+        readHead, writeHead = multiprocessing.Pipe()
+        writeFromChannelToSender.append(writeHead)
+        readFromChannelToSender.append(readHead)
 
-    for _ in range(const.total_receiver_number):
-        read_head, write_head = multiprocessing.Pipe()
-        read_from_channel_to_receiver.append(read_head)     # goes to receiver
-        write_from_channel_to_receiver.append(write_head)   # goes to channel
+    for i in range(const.totalReceiverNumber):
+        readHead, writeHead = multiprocessing.Pipe()
+        writeFromChannelToReceiver.append(writeHead)
+        readFromChannelToReceiver.append(readHead)
 
-    read_from_sender_to_channel, write_from_sender_to_channel = multiprocessing.Pipe()
+        readHead, writeHead = multiprocessing.Pipe()
+        writeFromReceiverToChannel.append(writeHead)
+        readFromReceiverToChannel.append(readHead)
 
+    senderList = []
+    receiverList = []
 
-    ##################################################################################
-    # making the sender list, receiver list, sender threadlist and receiver threadlist
-    ##################################################################################
-    sender_list = []
-    receiver_list = []
-    sender_threads = []
-    receiver_threads = []
+    fileType = input(
+        "Choose the Data Link Layer Protocol---\n1. Stop and Wait\n2. Go Back N\n3. Selective Repeat\n Choose numbers --  ")
 
+    if fileType == '1':
+        fileName = stop_n_wait
+        print("The chosen Protocol is Stop and Wait")
+    elif fileType == '2':
+        fileName = go_back_n
+        print("The chosen Protocol is Go Back N")
+    else:
+        fileName = selective_repeat
+        print("The chosen Protocol is Selective Repeat")
 
-    ##############################################################
-    # creating the channel, sender and receiver classes' instances
-    ##############################################################
-    channel = Channel(read_from_sender_to_channel, write_from_channel_to_sender, read_from_receiver_to_channel, write_from_channel_to_receiver)
+    for i in range(const.totalSenderNumber):
+        sender = fileName.Sender(
+            i,
+            const.inpFilePath + 'input'+str(i)+'.txt',
+            writeFromSenderToChannel[i],
+            readFromChannelToSender[i]
+        )
 
-    for i in range(const.total_sender_number):
-        sender = Sender(i, 'textfiles/input/input'+str(i)+'.txt', write_from_sender_to_channel, read_from_channel_to_sender[i], technique)
-        sender_list.append(sender)
+        senderList.append(sender)
 
-    for i in range(const.total_receiver_number):
-        receiver = Receiver(i, read_from_channel_to_receiver[i])
-        receiver_list.append(receiver)
+    for i in range(const.totalReceiverNumber):
+        receiver = Receiver(
+            i,
+            writeFromReceiverToChannel[i],
+            readFromChannelToReceiver[i],
+        )
 
+        receiverList.append(receiver)
 
-    ########################################################################################
-    # making one channel thread, and multiple sender-receiver threads, and add them to lists
-    ########################################################################################
-    channel_thread = threading.Thread(target=channel.initiate_channel_process)
+    channel = Channel(
+        readFromSenderToChannel,
+        writeFromChannelToSender,
+        readFromReceiverToChannel,
+        writeFromChannelToReceiver
+    )
 
-    for i in range(len(sender_list)):
-        s = threading.Thread(target=sender_list[i].initiate_sender_process)
-        sender_threads.append(s)
+    senderThreads = []
+    receiverThreads = []
 
-    for i in range(len(receiver_list)):
-        r = threading.Thread(target=receiver_list[i].initiate_receiver_process)
-        receiver_threads.append(r)
+    for i in range(len(senderList)):
+        p = threading.Thread(target=senderList[i].transmit)
+        senderThreads.append(p)
 
+    for i in range(len(receiverList)):
+        p = threading.Thread(target=receiverList[i].startReceiving)
+        receiverThreads.append(p)
 
-    #############################################################################################
-    # MULTIPROCESSING STARTS HERE
-    # initialise and end execution of single channel thread, and multiple sender-receiver threads
-    #############################################################################################
-    channel_thread.start()
+    channelThread = threading.Thread(target=channel.startChannel)
 
-    for thread in receiver_threads:
+    channelThread.start()
+
+    for thread in receiverThreads:
         thread.start()
 
-    for thread in sender_threads:
+    for thread in senderThreads:
         thread.start()
 
-    for thread in sender_threads:
+    for thread in senderThreads:
         thread.join()
 
-    for thread in receiver_threads:
-        thread.join()
+    channelThread.join()
 
-    channel_thread.join()
+    for thread in receiverThreads:
+        thread.join()
 
 
 if __name__ == "__main__":
-
-    print("------------------------------------------------------")
-    print("|    Choose the CSMA technique you want to use -     |")
-    print("|        1. One Persistent Method                    |")
-    print("|        2. Non Persistent Method                    |")
-    print("|        3. P-Persistent Methodt                     |")
-    print("------------------------------------------------------")
-    choice = input(" \nEnter your choice (1, 2 or 3): ")
-    if choice == '1': ch = "One Persistent Method"
-    elif choice == '2': ch = "Non Persistent Method"
-    elif choice == '3': ch = "P Persistent Method"
-    else: sys.exit("No Method Were Chosen!")
-    chosen = '\n-----------------------------------------------------------------------------\n' \
-            + "\t######## CHOSEN CSMA TECHNIQUE IS : {} ########".format(ch.upper()) \
-            + '\n-----------------------------------------------------------------------------\n\n'
-    print(chosen)
-    with open('textfiles/report.txt', 'a+', encoding='utf-8') as fptr1: fptr1.write(chosen)
-    with open('textfiles/analysis.txt', 'a+', encoding='utf-8') as fptr2: fptr2.write(chosen)
-    start_simulation(int(choice))
+    start()

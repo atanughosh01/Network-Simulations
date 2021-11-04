@@ -1,91 +1,70 @@
-'''module for creating data frames, extraction of data and decoding addresses'''
-
 import checker
 
 
 class Packet:
-    '''Packet Class to create packets from input data and decode each
-    invidual component of the generated packet'''
 
-    def __init__(self, _type, seq_no, segment_data, sender, dest) -> None:
-        self.type         = _type
-        self.seq_no       = seq_no
-        self.segment_data = segment_data
-        self.sender       = sender
-        self.dest         = dest
-        self.packet       = None
+    def __init__(self, _type, seqNo, segmentData, sender, dest):
+        self.type = _type
+        self.segmentData = segmentData
+        self.sender = sender
+        self.dest = dest
+        self.seqNo = seqNo
+        self.packet = None
 
+    #  preamble + sfd + dest + source + seqNo +len + data + cksum
+    #     7     +  1  +  6   +   6    +  1    +  1 +  46  +   4  =  72
 
-    ########################  PACKET STRUCTURE  ########################
-    #  preamble + sfd + dest + source + seq_no + len + data + cksum
-    #     7     +  1  +  6   +   6    +    1   +  1  +  46  +   4  =  72
-    ####################################################################
-
-
-    def make_pkt(self):
-        '''creates packet and returns packet obj'''
-        preamble = '01'*28                                          # (7 bytes)
-        sfd = '10101011'                                            # (1 byte)
-        dest_address = '{0:048b}'.format(int(self.dest))            # (6 bytes)
-        src_address = '{0:048b}'.format(int(self.sender))           # (6 bytes)
-        seq_to_bits = '{0:08b}'.format(int(self.seq_no))            # (1 byte)
-        length_to_bits = '{0:008b}'.format(len(self.segment_data))  # (1 byte)
+    def makePacket(self):
+        preamble = '01'*28
+        sfd = '10101011'
+        seqToBits = '{0:08b}'.format(int(self.seqNo))
+        destAddress = '{0:048b}'.format(int(self.dest))
+        length = '{0:008b}'.format(len(self.segmentData))
+        sourceAddress = '{0:048b}'.format(int(self.sender))
         data = ""
-        for i in range(len(self.segment_data)):
-            character = self.segment_data[i]
-            data_byte = '{0:08b}'.format(ord(character))
-            data = data + data_byte
-        packet = preamble + sfd + dest_address + src_address + seq_to_bits + length_to_bits + data
-        ck_sum = checker.check_sum(packet)
-        packet = packet + ck_sum
+        for i in range(0, len(self.segmentData)):
+            character = self.segmentData[i]
+            dataByte = '{0:08b}'.format(ord(character))
+            data = data + dataByte
+        # print(data)
+        packet = preamble + sfd + destAddress + \
+            sourceAddress + seqToBits + length + data
+        ckSum = checker.checkSum(packet)
+        packet = packet + ckSum
+        # print(len(packet))
         self.packet = packet
         return self
 
-
-    def __str__(self) -> str:
+    def __str__(self):
         return str(self.packet)
 
-
-    def extract_data(self) -> str:
-        '''Extracts the original raw data from the generated packets'''
+    def extractData(self):
         text = ""
         data = self.packet[176:544]
-        ascii_data = [data[i:i+8] for i in range(0, len(data), 8)]
-        for letter in ascii_data:
+        asciiData = [data[i:i+8] for i in range(0, len(data), 8)]
+        for letter in asciiData:
             text += chr(int(letter, 2))
         return text
 
+    def decodeLength(self):
+        return len(self.segmentData)
 
-    def decode_length(self) -> int:
-        '''Decodes length of segment data'''
-        return len(self.segment_data)
-
-
-    def decode_dest_address(self) -> int:
-        '''Decodes Destination Address from the generated packet'''
+    def decodeDestAddress(self):
         dest = self.packet[64:112]
-        dest_address = int(dest, 2)
-        return dest_address
+        destAddress = int(dest, 2)
+        return destAddress
 
+    def decodeSourceAddress(self):
+        source = self.packet[112:160]
+        sourceAddress = int(source, 2)
+        return sourceAddress
 
-    def decode_src_address(self) -> int:
-        '''Decodes Source Address from the generated packet'''
-        src = self.packet[112:160]
-        src_address = int(src, 2)
-        return src_address
+    def checkForError(self):
+        return checker.checkError(self.packet)
 
-
-    def check_for_error(self) -> bool:
-        '''Checks for error in the packets (based on CheckSum Error Detection technique)'''
-        return checker.check_error(self.packet)
-
-
-    def check_type(self):
-        '''Checks type of generated packet'''
+    def checkType(self):
         return self.type
 
-
-    def decode_seq_no(self) -> int:
-        '''Decodes sequence number from the generated packet'''
-        seq_no = self.packet[160:168]
-        return int(seq_no, 2)
+    def decodeSeqNo(self):
+        seqNo = self.packet[160:168]
+        return int(seqNo, 2)

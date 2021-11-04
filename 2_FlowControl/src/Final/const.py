@@ -1,31 +1,19 @@
-'''module for assiging values to variables that remain constant throughout the flow during execution'''
+totalSenderNumber = 4
+totalReceiverNumber = 4
+defaultDataPacketSize = 46
+senderTimeout = 2
+windowSize = 2
 
-import random
+# receiver consts
+inpFilePath = "./textfiles/input/"
+outFilePath = "./textfiles/output/"
 
+# channel const
+dropOutProb = 0.1
+injectErrorProb = 0.2
+delayProb = 0.3
+delay = 0.75
 
-total_sender_number = 4
-total_receiver_number = 4
-default_datapacket_size = 46
-
-
-####################################
-# sender constants
-####################################
-time_slot = 0.25
-propagation_time = 1            # sender remains busy this time
-vulnerable_time = 0.1           # data length / bandwidth
-collision_wait_time = 0.1
-non_persistant_waiting_time = random.randint(1, 4)
-
-
-####################################
-# receiver constants
-####################################
-input_file_path = "./textfiles/input/"
-outfile_path = "./textfiles/output/"
-
-
-####################################
-# channel constants
-####################################
-channel_propagation_time = 0.8  # channel remains busy this time
+# error const
+minError = 5
+maxError = 75
