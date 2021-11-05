@@ -3,8 +3,10 @@ import multiprocessing
 import stop_n_wait
 import go_back_n
 import selective_repeat
+
 # from channel import *
 # from receiver import *
+
 from channel import Channel
 from receiver import Receiver
 import const
@@ -45,8 +47,7 @@ def start():
     senderList = []
     receiverList = []
 
-    fileType = input(
-        "Choose the Data Link Layer Protocol---\n1. Stop and Wait\n2. Go Back N\n3. Selective Repeat\n Choose numbers --  ")
+    fileType = input("Choose the Data Link Layer Protocol---\n1. Stop and Wait\n2. Go Back N\n3. Selective Repeat\n Choose numbers --  ")
 
     if fileType == '1':
         fileName = stop_n_wait

@@ -61,7 +61,7 @@ class Sender:
         while True:
             time.sleep(0.2)
             self.timeoutEvent.wait(const.senderTimeout)
-            if (not self.timeoutEvent.isSet()) and (len(self.recentPacketQueue) > 0):
+            if (not self.timeoutEvent.is_set()) and (len(self.recentPacketQueue) > 0):
                 self.senderToChannel.send(self.recentPacketQueue[0])
                 packet = self.recentPacketQueue[0]
                 self.recentPacketQueue.append(packet)
