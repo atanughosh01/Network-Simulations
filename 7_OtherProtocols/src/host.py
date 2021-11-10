@@ -2,6 +2,7 @@
 
 """Host for connecting to the servers"""
 
+# import sys
 import socket
 
 HOST = "127.0.0.1"
@@ -24,10 +25,12 @@ class Host:
         self.data = ""
         self.msg = ""
 
-    def connect_hosts(self, choice):
+    def connect_hosts(self):
         """Connects The Hosts To Specific Servers"""
 
         print("Host started!!")
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.connect((HOST, DHCP_PORT))
         self.sock.send(bytes("Requesting port number of the host!!", "utf-8"))
         self.name = input("Enter the name of the host : ")
@@ -38,7 +41,18 @@ class Host:
 
         while True:
 
-            if choice == 1:
+            print("\n")
+            print("+---------------------------------------------+")
+            print("|    You want to >>                           |")
+            print("|    1. Request file from FTP server          |")
+            print("|    2. Send a msg to another HOST            |")
+            print("|    3. Receive a msg from another HOST       |")
+            print("|    4. Exit!!!!                              |")
+            print("+---------------------------------------------+")
+            choice = input("Enter Your Choice (1/2/3/4) : ")
+            print("\n")
+
+            if choice == "1":
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 self.sock.connect((HOST, FTP_PORT))
@@ -50,7 +64,7 @@ class Host:
                 self.sock.close()
                 continue
 
-            if choice == 2:
+            if choice == "2":
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 self.sock.connect((HOST, BGP_PORT))
@@ -64,7 +78,7 @@ class Host:
                 self.sock.close()
                 continue
 
-            if choice == 3:
+            if choice == "3":
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 self.sock.bind((HOST, int(self.own_address[13:-2])))
@@ -83,21 +97,15 @@ class Host:
                 self.sock.close()
                 continue
 
-            if choice == 4:
+            if choice == "4":
                 print("Host has been terminated!")
                 break
 
-            if choice not in [1, 2, 3, 4]:
-                print("Invalid choice! Select 1/2/3/4.")
+            if choice not in ["1", "2", "3", "4"]:
+                print("Invalid choice! Reselect 1/2/3/4.")
                 continue
 
 
 if __name__ == "__main__":
-    print("Do you wish to:")
-    print("1.Request file from FTP server")
-    print("2.Send a file to another host")
-    print("3.Receive a file from another host")
-    print("4.Exit!!!!")
-    select = int(input("Enter choice : "))
     host = Host()
-    host.connect_hosts(select)
+    host.connect_hosts()
