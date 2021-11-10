@@ -1,17 +1,17 @@
-##!/usr/bin/env python3.9
+#!/usr/bin/env python3.9
 
 """Host for connecting to the servers"""
 
-# import sys
 import socket
 
-HOST = "127.0.0.1"
-BGP_PORT = 54400
+HOST = "127.0.0.1"      # Standard loopback interface address (localhost)
+BGP_PORT = 54400        # Port to listen on (non-privileged ports are > 1023)
 DHCP_PORT = 54100
 FTP_PORT = 54200
 
+
 class Host:
-    """Host for connecting to the servers"""
+    """Host Class for implementing connections"""
 
     def __init__(self):
         "Initialize The Hosts"

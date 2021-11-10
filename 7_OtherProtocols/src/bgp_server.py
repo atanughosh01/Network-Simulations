@@ -1,11 +1,12 @@
-##!/usr/bin/env python3.9
+#!/usr/bin/env python3.9
 
 """BGP Server implementation in python"""
 
 import socket
 
-HOST = "127.0.0.1"
-BGP_PORT = 54400
+HOST = "127.0.0.1"      # Standard loopback interface address (localhost)
+BGP_PORT = 54400        # Port to listen on (non-privileged ports are > 1023)
+
 
 class BGPServer:
     """BGP Server class"""

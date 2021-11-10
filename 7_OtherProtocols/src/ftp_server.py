@@ -1,11 +1,11 @@
-##!/usr/bin/env python3.9
+#!/usr/bin/env python3.9
 
 """FTP Server implementation in python"""
 
 import socket
 
-HOST = "127.0.0.1"
-FTP_PORT = 54200
+HOST = "127.0.0.1"      # Standard loopback interface address (localhost)
+FTP_PORT = 54200        # Port to listen on (non-privileged ports are > 1023)
 
 
 class FTPServer:

@@ -1,11 +1,11 @@
-##!/usr/bin/env python3.9
+#!/usr/bin/env python3.9
 
 """DHCP Server implementation in python"""
 
 import socket
 
-HOST = "127.0.0.1"
-DHCP_PORT = 54100
+HOST = "127.0.0.1"      # Standard loopback interface address (localhost)
+DHCP_PORT = 54100       # Port to listen on (non-privileged ports are > 1023)
 BGP_PORT = 54400
 
 
