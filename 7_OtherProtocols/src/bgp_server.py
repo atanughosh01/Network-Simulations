@@ -15,7 +15,6 @@ class BGPServer:
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.conn, self.addr = self.sock.accept()
         self.address = ""
         self.name = ""
         self.data = ""
@@ -30,32 +29,33 @@ class BGPServer:
             self.sock.bind((BGP_HOST, BGP_PORT))
             print("Listening for a connection on its own port....")
             self.sock.listen(1)
-            self.msg = self.conn.recv(1024).decode("utf-8")
+            conn, addr = self.sock.accept()
+            self.msg = conn.recv(1024).decode("utf-8")
             print(self.msg)
 
             if self.msg == "Request to add host to the log!":
-                self.conn.send(bytes("Request granted! Send host name!", "utf-8"))
-                self.name = self.conn.recv(1024).decode("utf-8")
-                self.conn.send(bytes("Send address!", "utf-8"))
-                self.address = self.conn.recv(1024).decode("utf-8")
+                conn.send(bytes("Request granted! Send host name!", "utf-8"))
+                self.name = conn.recv(1024).decode("utf-8")
+                conn.send(bytes("Send address!", "utf-8"))
+                self.address = conn.recv(1024).decode("utf-8")
                 self.log[self.name] = self.address
-                self.conn.close()
+                conn.close()
                 self.sock.close()
                 print("The server log now : ")
                 print(self.log)
                 print("BGP Server still running!")
 
             else:
-                self.conn.send(bytes("Request granted! Send host name!", "utf-8"))
-                self.name = self.conn.recv(1024).decode("utf-8")
-                self.conn.send(bytes("Send data to be transferred!", "utf-8"))
-                self.data = self.conn.recv(1024).decode("utf-8")
-                self.conn.close()
+                conn.send(bytes("Request granted! Send host name!", "utf-8"))
+                self.name = conn.recv(1024).decode("utf-8")
+                conn.send(bytes("Send data to be transferred!", "utf-8"))
+                self.data = conn.recv(1024).decode("utf-8")
+                conn.close()
                 self.sock.close()
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                self.addr = self.log[self.name]
-                self.sock.connect((BGP_HOST, int(self.addr[13:-2])))
+                addr = self.log[self.name]
+                self.sock.connect((BGP_HOST, int(addr[13:-2])))
                 self.sock.send(bytes("Requesting data transfer by {}".format(self.name), "utf-8"))
                 self.msg = self.sock.recv(1024).decode("utf-8")
                 print("Message received : {}".format(self.msg))
