@@ -5,7 +5,7 @@
 import socket
 
 HOST = "127.0.0.1"
-OWN_PORT = 54100
+DHCP_PORT = 54100
 BGP_PORT = 54400
 
 
@@ -25,7 +25,7 @@ class DHCPServer:
 
         print("DHCP Server started!!")
         while True:
-            self.sock.bind((HOST, OWN_PORT))
+            self.sock.bind((HOST, DHCP_PORT))
             print("Listening for a connection on its own port....")
             self.sock.listen(5)
             conn, addr = self.sock.accept()
