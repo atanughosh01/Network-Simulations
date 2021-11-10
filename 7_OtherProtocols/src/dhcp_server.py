@@ -25,6 +25,8 @@ class DHCPServer:
 
         print("DHCP Server started!!")
         while True:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.sock.bind((HOST, DHCP_PORT))
             print("Listening for a connection on its own port....")
             self.sock.listen(5)
