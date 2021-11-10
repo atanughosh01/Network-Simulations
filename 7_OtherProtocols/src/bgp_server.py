@@ -26,12 +26,13 @@ class BGPServer:
 
         print("BGP Server started!!")
         while True:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.sock.bind((HOST, BGP_PORT))
             print("Listening for a connection on its own port....")
-            self.sock.listen(5)
+            self.sock.listen(1)
             conn, addr = self.sock.accept()
             self.msg = conn.recv(1024).decode("utf-8")
-            print(self.msg)
 
             if self.msg == "Request to add host to the log!":
                 conn.send(bytes("Request granted! Send host name!", "utf-8"))
@@ -41,9 +42,9 @@ class BGPServer:
                 self.log[self.name] = self.address
                 conn.close()
                 self.sock.close()
-                print("The server log now : ")
+                print("The server log now : ", end="")
                 print(self.log)
-                print("BGP Server still running!")
+                print("BGP Server is still running!")
 
             else:
                 conn.send(bytes("Request granted! Send host name!", "utf-8"))
