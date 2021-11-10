@@ -1,4 +1,4 @@
-# !/usr/bin/env python3.9
+##!/usr/bin/env python3.9
 
 """FTP Server implementation in python"""
 
@@ -16,9 +16,9 @@ class FTPServer:
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.file_name = ""
         self.name = ""
         self.data = ""
-        self.file_name = ""
 
     def start_ftp(self):
         """Start The FTP Server"""
