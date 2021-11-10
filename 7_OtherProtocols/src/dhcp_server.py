@@ -1,10 +1,10 @@
-##!/usr/bin/env python3.9
+# !/usr/bin/env python3.9
 
 """DHCP Server implementation in python"""
 
 import socket
 
-DHCP_HOST = "127.0.0.1"
+HOST = "127.0.0.1"
 OWN_PORT = 54100
 BGP_PORT = 54400
 
@@ -20,15 +20,14 @@ class DHCPServer:
         self.name = ""
         self.msg = ""
 
-
     def start_dhcp(self):
         """Start The DHCP Server"""
 
         print("DHCP Server started!!")
         while True:
-            self.sock.bind((DHCP_HOST, OWN_PORT))
+            self.sock.bind((HOST, OWN_PORT))
             print("Listening for a connection on its own port....")
-            self.sock.listen(1)
+            self.sock.listen(5)
             conn, addr = self.sock.accept()
             print("Connection by : {}".format(addr))
             self.msg = conn.recv(1024).decode("utf-8")
@@ -39,7 +38,7 @@ class DHCPServer:
             self.sock.close()
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.sock.connect((DHCP_HOST, BGP_PORT))
+            self.sock.connect((HOST, BGP_PORT))
             self.sock.send(bytes("Request to add host to the log!", "utf-8"))
             self.msg = self.sock.recv(1024).decode("utf-8")
             print("Message received : {}".format(self.msg))
