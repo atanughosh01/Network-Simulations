@@ -4,7 +4,7 @@
 
 import socket
 
-BGP_HOST = "127.0.0.1"
+HOST = "127.0.0.1"
 BGP_PORT = 54400
 
 class BGPServer:
@@ -26,9 +26,9 @@ class BGPServer:
 
         print("BGP Server started!!")
         while True:
-            self.sock.bind((BGP_HOST, BGP_PORT))
+            self.sock.bind((HOST, BGP_PORT))
             print("Listening for a connection on its own port....")
-            self.sock.listen(1)
+            self.sock.listen(5)
             conn, addr = self.sock.accept()
             self.msg = conn.recv(1024).decode("utf-8")
             print(self.msg)
@@ -55,7 +55,7 @@ class BGPServer:
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 addr = self.log[self.name]
-                self.sock.connect((BGP_HOST, int(addr[13:-2])))
+                self.sock.connect((HOST, int(addr[13:-2])))
                 self.sock.send(bytes("Requesting data transfer by {}".format(self.name), "utf-8"))
                 self.msg = self.sock.recv(1024).decode("utf-8")
                 print("Message received : {}".format(self.msg))
