@@ -2,7 +2,8 @@
 import sys
 
 while True:
-    inp = input("\nEnter filename to generate report : ")
+    inp = input("\nEnter filename to generate report (Enter Q to QUIT) : ")
+    if inp == "Q" or "q": sys.exit("\n Quitting....\n QUITTED !!!\n")
     try:
         with open("textfiles/" + inp, "r") as text_file:
             line_no, count1, count2 = 0, 0, 0
