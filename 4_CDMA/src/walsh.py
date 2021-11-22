@@ -1,4 +1,4 @@
-'''Walsh CEncoding Function'''
+'''Walsh Encoding Function'''
 
 def get_next_powerof2(num):
     power = 1
@@ -34,9 +34,11 @@ def build_walsh_table(length, i1, i2, j1, j2, is_complement):
 
 
 if __name__ == "__main__":
+
     num_of_stations = int(input("\nEnter Number of Stations : "))
     NUM = get_next_powerof2(num_of_stations)
     wls_table = [[0 for _ in range(NUM)] for _ in range(NUM)]
+
     print("Printing Walsh Table for {} Stations".format(len(wls_table[0])))
     print("Size of Each 1-D Array in The Formed Walsh Table is {}".format(NUM))
     build_walsh_table(NUM, 0, NUM - 1, 0, NUM - 1, False)
