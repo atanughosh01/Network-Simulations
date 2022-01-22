@@ -4,68 +4,104 @@ import sys
 import time
 import socket
 import getpass
+from datetime import datetime
+
+# Manager access command    :   sudo-su-manager
+# Manager access password   :   chmon#manager
+
+
+                    #################################################################
+                    #                                                               #
+                    #    * 0 - 1023      : well-known ports like 80, 443, etc       #
+                    #    * 1024 - 49151  : Registered ports                         #
+                    #    * 49152 - 65535 : Dynamic and Private ports                #
+                    #                                                               #
+                    #################################################################
 
 
 class Client():
     """Client class with support for guestmode access and managermode access"""
 
     def __init__(self):
-        self.server_host = "127.0.0.1"
-        self.server_port = "8000"
+        self.server_host = "127.0.0.1"   #localhost
+        self.server_port = "5050"
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.admin_password = 'changeadmin'
+        self.admin_password = "chmon#manager"
 
 
-    def start_client_thread(self):
+    def start_client_threads(self):
         """Starts a client thread and connects to the server through threads"""
+        name = input("\nEnter your username: ")
+        type_of_user = "g"
+        symbol = f"\n>>> {name}@Guest__$  "
 
-        name = input("Enter your name: ")
-        type_of_user = "g"      # guest user
-        symbol = "Guest$  "
-
+        ################################################################
+        # Each client binds to this localhost and specified port address
+        ################################################################
         inp = input("Enter the host and port (WhiteSpace Separated): ")
         host_port = inp.split()
 
         if(host_port[0] == self.server_host and host_port[1] == self.server_port):
-            self.socket.connect(('localhost', 8000))
-        else: sys.exit("Entered Server address is Incorrect !!!")
+            self.socket.connect(('localhost', 5050))
+        else:
+            curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            sys.exit(f"{curr_datetime} || Error!!! Entered Server address is Incorrect!")
 
+
+        #######################################################################
+        # If connected to the correct IP address, receives CONFIRMATION message
+        #######################################################################
         welcome_msg = self.socket.recv(1024).decode("utf-8")
-        print(welcome_msg)
+        curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        print(f"{curr_datetime} || {welcome_msg}")
         time.sleep(0.05)
 
         self.socket.send(name.encode("utf-8"))
         time.sleep(0.05)
         welcome_msg = self.socket.recv(1024).decode("utf-8")
-        print(welcome_msg)
+        curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        print(f"{curr_datetime} || {welcome_msg}")
 
+
+        #########################################################################
+        # Loops untill the user logsout of the system and performs CRUD operation
+        #   * Create        * Read        * Update      * Delete
+        #########################################################################
         while True:
             if type_of_user.lower() == "m":
-                symbol = "Manager#  "
-            else: symbol = "Guest$  "
+                symbol = f"\n>>> {name}@Manager__#  "
+            else: symbol = f"\n>>> {name}@Guest__$  "
             user_input = input(symbol)
             user_input = user_input.split()
             length = len(user_input)
 
-            if user_input[0] == "end":
+            ##################################################################
+            # If user requestes for logging out, sends the user details to the
+            # server and the loop is exited, the connection is freed
+            ##################################################################
+            if user_input[0] == "logout":
                 self.socket.send(name.encode("utf-8"))
                 time.sleep(0.05)
                 self.socket.send(type_of_user.encode("utf-8"))
                 time.sleep(0.05)
-                self.socket.send("end".encode("utf-8"))
+                self.socket.send("logout".encode("utf-8"))
                 break
 
-            count = 0
-
+            count = 0       # Counter is for parsing purpose
             while length > count:
 
+                ###########################################################
+                # If the type 0f the user is 'GUEST' and the query is 'GET'
+                # we need 2 attributes in total, e.g. GET(1) city_name(2)
+                ###########################################################
                 if(type_of_user == "g" and user_input[count].lower() == "get"):
                     assert length >= count+2, "Invalid input format!"
                     count += 1
                     attribute = user_input[count]
                     count += 1
 
+                    # Sends to the Server
                     self.socket.send(name.encode("utf-8"))
                     time.sleep(0.05)
                     self.socket.send(type_of_user.encode("utf-8"))
@@ -74,9 +110,17 @@ class Client():
                     time.sleep(0.05)
                     self.socket.send(attribute.encode("utf-8"))
 
+                    # Expects an answer from the Server
                     response = self.socket.recv(1024).decode("utf-8")
-                    print(response)
+                    curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    print(f"{curr_datetime} || {response}")
+                    # print(response)
 
+
+                #################################################################
+                # If the type 0f the user is 'GUEST' and the query is 'PUT'
+                # we need 3 attributes in total, e.g. PUT(1) city(2) city_name(3)
+                #################################################################
                 elif type_of_user == "g" and user_input[count].lower() == "put":
                     assert length >= count+3, "Invalid input format!"
                     count += 1
@@ -85,7 +129,7 @@ class Client():
                     value = user_input[count]
                     count += 1
 
-                    #send to server
+                    # Sends to the Server
                     self.socket.send(name.encode("utf-8"))
                     time.sleep(0.05)
                     self.socket.send(type_of_user.encode("utf-8"))
@@ -96,29 +140,44 @@ class Client():
                     time.sleep(0.05)
                     self.socket.send(value.encode("utf-8"))
 
+                    # Expects an answer from the Server
                     ans = self.socket.recv(1024).decode("utf-8")
-                    print(ans)
+                    curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    print(f"{curr_datetime} || {ans}")
 
-                elif type_of_user == "g" and user_input[count].lower() == "makemanager":
+
+                ####################################################################
+                # If an user tries to switch from 'GUEST' mode to 'MANAGER' mode
+                # a password prompt is shown for 'AUTHENTICATION' purpose and upon
+                # valid authentication the loop continues, else warning is displayed
+                ####################################################################
+                elif type_of_user == "g" and user_input[count].lower() == "sudo-su-manager":
                     password = getpass.getpass(prompt="Enter your manager password: ")
-
                     if password == self.admin_password:
+                        # If password matches the type of user is changed from "GUEST" to 'MANAGER
                         type_of_user = "m"
                         count += 1
+                        # Sends to the Server
                         self.socket.send(name.encode("utf-8"))
                         time.sleep(0.05)
                         self.socket.send('g'.encode("utf-8"))
                         time.sleep(0.05)
                         self.socket.send('u'.encode("utf-8"))
                         time.sleep(0.05)
-
                     elif password == "exit":
-                        print("Exiting...")
+                        curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                        print(f"{curr_datetime} || Exiting...")
+                        break
+                    else:
+                        curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                        print(f"{curr_datetime} || You have entered a wrong password !!!")
                         break
 
-                    else: print("You have entered a wrong password !!!")
 
-
+                ###########################################################################
+                # If the type 0f the user is 'MANAGER' and the query is 'PUT' we
+                # need 4 attributes in total, e.g. PUT(1) user_name(2) city(3) city_name(4)
+                ###########################################################################
                 elif(type_of_user == "m" and user_input[count].lower() == "put"):
                     assert length >= count + 4, "Invalid input format!"
                     count += 1
@@ -128,6 +187,8 @@ class Client():
                     count += 1
                     value = user_input[count]
                     count += 1
+
+                    # Sends to the Server
                     self.socket.send(user_name.encode("utf-8"))
                     time.sleep(0.05)
                     self.socket.send(type_of_user.encode("utf-8"))
@@ -139,9 +200,16 @@ class Client():
                     self.socket.send(value.encode("utf-8"))
                     time.sleep(0.05)
 
+                    # Expects an answer from the Server
                     ans = self.socket.recv(1024).decode("utf-8")
-                    print(ans)
+                    curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    print(f"{curr_datetime} || {ans}")
 
+
+                ###################################################################
+                # If the type 0f the user is 'MANAGER' and the query is 'GET' we
+                # need 3 attributes in total, e.g. GET(1) user_name(2) city_name(3)
+                ###################################################################
                 elif(type_of_user == "m" and user_input[count].lower() == "get"):
                     assert length >= count + 3, "Invalid input format!"
                     count += 1
@@ -150,6 +218,7 @@ class Client():
                     attribute = user_input[count]
                     count += 1
 
+                    # Sends to the Server
                     self.socket.send(user_name.encode("utf-8"))
                     time.sleep(0.05)
                     self.socket.send(type_of_user.encode("utf-8"))
@@ -159,14 +228,23 @@ class Client():
                     self.socket.send(attribute.encode("utf-8"))
                     time.sleep(0.05)
 
+                    # Expects an answer from the Server
                     ans = self.socket.recv(1024).decode("utf-8")
-                    print(ans)
+                    curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    print(f"{curr_datetime} || {ans}")
 
+
+                ##################################################
+                # In all other cases an error message is displayed
+                # and the loop is terminated
+                ##################################################
                 else:
-                    print("Invalid input format!")
+                    curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                    print(f"{curr_datetime} || Invalid input format!")
                     break
 
 
+# Driver Code
 if __name__ == "__main__":
     c = Client()
-    c.start_client_thread()
+    c.start_client_threads()
