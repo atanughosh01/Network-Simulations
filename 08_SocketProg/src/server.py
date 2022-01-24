@@ -46,7 +46,7 @@ class Server:
                     conn.send("Access Denied! You need Manager privilage for this!".encode("utf-8"))
                 else:
                     user_data = self.key_val.get(name, "null")
-                    if user_data == "null": # Means the user is not in key-val dictionary
+                    if user_data == "null": # Means the user's attribute is not in key-val dict
                         self.key_val[name] = {}
                         response = "\n"     # Prints a blank line in client
                         conn.send(response.encode("utf-8"))
@@ -69,7 +69,7 @@ class Server:
                     conn.send("Access Denied! You need Manager privilage for this!".encode("utf-8"))
                 else:
                     user_data = self.key_val.get(name, "null")
-                    if user_data == "null":  # Means the user is not in key-val dictionary
+                    if user_data == "null":  # Means the user's attribute is not in key-val dict
                         self.key_val[name] = {}
 
                     self.key_val[name][attribute] = value
@@ -97,7 +97,7 @@ class Server:
                 attribute = conn.recv(1024).decode("utf-8")
                 value = conn.recv(1024).decode("utf-8")
                 user_data = self.key_val.get(name, "null")
-                if user_data == "null":     # Means the user is not in key-val dictionary
+                if user_data == "null":     # Means the user's attribute is not in key-val dict
                     self.key_val[name] = {}
 
                 self.key_val[name][attribute] = value
@@ -111,7 +111,7 @@ class Server:
             elif(type_of_user == "m" and type_of_operation == "get"):
                 attribute = conn.recv(1024).decode("utf-8")
                 user_data = self.key_val.get(name, "null")
-                if user_data == "null":       # Means the user is not in key-val dictionary
+                if user_data == "null":       # Means the user's attribute is not in key-val dict
                     self.key_val[name] = {}
                     response = "\n"           # Prints a blank line in client
                     conn.send(response.encode("utf-8"))
@@ -136,7 +136,7 @@ class Server:
 
     def run(self):
         """Run the server"""
-        self.socket.bind(('localhost', 5050))
+        self.socket.bind(("localhost", 5050))
         self.socket.listen(10)
         print("\n\t+-----------------------------------------------------------------+")
         print("\t|    The server is running on host 127.0.0.1 and port 5050 !!     |")
@@ -151,9 +151,9 @@ class Server:
             if self.auth_dict.get(name, 0) == 0:
                 self.auth_dict[name] = 1
                 conn.send("Registration successful!".encode("utf-8"))
-            # Means if any pre-existing user logs in again after he logged out
+            # Means if any pre-existing user logs in again after logging out
             else:
-                conn.send(f"{name} || Welcome back!".encode("utf-8"))
+                conn.send(f"Welcome back {name} !!!".encode("utf-8"))
 
             curr_datetime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             print(f"{curr_datetime} || {name} has logged into the server!! ")

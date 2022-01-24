@@ -6,8 +6,8 @@ SourceCodes and detailed reports on Socket Programming implemented in Python3.
 ## Simulation Guide
 
  * First, in a terminal window, start the server by saying `python3 server.py`
- * Now, in a different terminal window, start a client by saying `python3 client.py`
- * Remember, you can open as many clients as you want, by simply running `python3 client.py` on separate terminal windows.
+ * Then, in a different terminal window, start a client by saying `python3 client.py`
+ * You can open as many clients as you want, by simply running `python3 client.py` on separate terminal windows.
  * You need to enter your name, and then enter the server address and port no. which is **127.0.0.1** and **5050** .
  * **Every signup/login is as a guest by default**.
  * Now, you can execute **GET** and **PUT** , as required in any order.
