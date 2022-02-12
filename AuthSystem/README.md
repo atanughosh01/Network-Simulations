@@ -1,8 +1,3 @@
-# Socket-Programming
-
-SourceCodes and detailed reports on Socket Programming implemented in Python3.
-
-
 ## Simulation Guide
 
  * First, in a terminal window, start the server by saying `python3 server.py`

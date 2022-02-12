@@ -1,7 +1,5 @@
 # CDMA
 
-SourceCode and detailed report on Walsh encoded CDMA multiple access technique.
-
 * To simulate the project properly-
 
     1. Change values of variables in ```const.py``` according to your wish. (Specially ```total_sender_number``` and ```total_receiver_number```).\
